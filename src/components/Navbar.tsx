@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import { BookOpen, PenLine, LogIn, LogOut } from 'lucide-react';
+import { BookOpen, PenLine, LogIn, LogOut, User } from 'lucide-react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 
@@ -34,6 +34,13 @@ const Navbar = () => {
         </button>
 
         <div className="flex items-center gap-2 md:gap-3">
+          <button
+            onClick={() => navigate('/about')}
+            className="flex items-center gap-1.5 text-sm px-3 py-1.5 rounded-full glass text-muted-foreground hover:text-primary transition-colors font-mono"
+          >
+            <User className="w-3.5 h-3.5" />
+            <span className="hidden sm:inline">About</span>
+          </button>
           {user && (
             <button
               onClick={() => navigate('/write')}
