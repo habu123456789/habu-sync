@@ -5,6 +5,7 @@ import { useAuth } from '@/hooks/useAuth';
 import Hero from '@/components/Hero';
 import BlogCard from '@/components/BlogCard';
 import Navbar from '@/components/Navbar';
+import Footer from '@/components/Footer';
 import { motion } from 'framer-motion';
 import { Loader2 } from 'lucide-react';
 
@@ -85,6 +86,7 @@ const Index = () => {
           </motion.div>
         )}
       </section>
+      <Footer />
     </div>
   );
 };
