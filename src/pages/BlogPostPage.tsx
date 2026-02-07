@@ -114,12 +114,12 @@ const BlogPostPage = () => {
                 )}
               </div>
 
-              <h1 className="text-3xl md:text-5xl font-display font-bold text-gradient-primary glow-text mb-10">
+              <h1 className="text-2xl md:text-3xl font-display font-bold text-gradient-primary glow-text mb-8">
                 {post.title}
               </h1>
 
               <div
-                className="text-foreground/90 leading-[2] text-base md:text-lg whitespace-pre-line"
+                className="text-foreground/90 leading-[1.8] text-sm md:text-base whitespace-pre-line"
                 dangerouslySetInnerHTML={{ __html: post.content }}
               />
             </div>
