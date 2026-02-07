@@ -60,15 +60,8 @@ const BlogPostPage = () => {
   }
 
   if (!post) {
-    return (
-      <div className="min-h-screen flex flex-col items-center justify-center gap-4">
-        <Navbar />
-        <p className="text-muted-foreground">Post nahi mila</p>
-        <button onClick={() => navigate('/')} className="text-primary hover:underline">
-          ← Wapas jao
-        </button>
-      </div>
-    );
+    navigate('/');
+    return null;
   }
 
   const date = new Date(post.published).toLocaleDateString('hi-IN', {

@@ -53,11 +53,6 @@ const Index = () => {
           </div>
         )}
 
-        {error && !blogspotPosts.length && (
-          <div className="glass rounded-2xl p-6 text-center">
-            <p className="text-sm text-muted-foreground">Posts load nahi ho paye</p>
-          </div>
-        )}
 
         <div className="grid gap-4 md:gap-6">
           {allPosts.map((post, i) => (

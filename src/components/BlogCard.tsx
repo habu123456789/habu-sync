@@ -31,18 +31,18 @@ const BlogCard = ({ post, index, onClick, stripHtml }: BlogCardProps) => {
       </div>
 
       <div className="relative z-10">
-        <div className="flex items-center gap-2 text-xs font-mono text-muted-foreground mb-4">
+        <div className="flex items-center gap-2 text-xs font-mono text-primary/60 mb-4">
           <Calendar className="w-3 h-3" />
           <span>{date}</span>
-          <span className="text-primary/50">·</span>
-          <span className="text-primary/70">{post.author}</span>
+          <span className="text-primary/30">·</span>
+          <span className="text-primary/50">{post.author}</span>
         </div>
 
         <h3 className="text-base md:text-lg font-display font-semibold text-foreground mb-2 group-hover:text-gradient-primary transition-all duration-300">
           {post.title}
         </h3>
 
-        <p className="text-muted-foreground leading-relaxed line-clamp-3 text-xs md:text-sm">
+        <p className="text-primary/40 leading-relaxed line-clamp-3 text-xs md:text-sm">
           {plainText}
         </p>
 
