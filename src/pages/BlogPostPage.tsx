@@ -1,5 +1,7 @@
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import { useBlogPosts } from '@/hooks/useBlogPosts';
+import { useEffect, useState } from 'react';
+import { supabase } from '@/integrations/supabase/client';
 import { motion } from 'framer-motion';
 import { ArrowLeft, Calendar, User, ExternalLink } from 'lucide-react';
 import Navbar from '@/components/Navbar';
@@ -7,9 +9,47 @@ import Navbar from '@/components/Navbar';
 const BlogPostPage = () => {
   const { postId } = useParams();
   const navigate = useNavigate();
-  const { posts, loading } = useBlogPosts();
+  const location = useLocation();
+  const isLocal = location.pathname.includes('/post/local/');
+  const { posts, loading: blogLoading } = useBlogPosts();
 
-  const post = posts.find((p) => encodeURIComponent(p.title) === postId);
+  const [localPost, setLocalPost] = useState<any>(null);
+  const [localLoading, setLocalLoading] = useState(isLocal);
+
+  useEffect(() => {
+    if (isLocal && postId) {
+      supabase
+        .from('blog_posts')
+        .select('*')
+        .eq('id', postId)
+        .single()
+        .then(async ({ data }) => {
+          if (data) {
+            const { data: profile } = await supabase
+              .from('profiles')
+              .select('display_name')
+              .eq('user_id', data.user_id)
+              .single();
+            setLocalPost({ ...data, author: profile?.display_name || 'User' });
+          }
+          setLocalLoading(false);
+        });
+    }
+  }, [isLocal, postId]);
+
+  const loading = isLocal ? localLoading : blogLoading;
+
+  const post = isLocal
+    ? localPost
+      ? {
+          title: localPost.title,
+          content: localPost.content,
+          published: localPost.created_at,
+          url: '',
+          author: localPost.author,
+        }
+      : null
+    : posts.find((p) => encodeURIComponent(p.title) === postId);
 
   if (loading) {
     return (
@@ -55,7 +95,6 @@ const BlogPostPage = () => {
           </button>
 
           <div className="glass rounded-3xl p-8 md:p-12 relative overflow-hidden">
-            {/* Decorative glow */}
             <div className="absolute -top-32 -right-32 w-64 h-64 bg-glow-primary/10 rounded-full blur-[100px] pointer-events-none" />
             <div className="absolute -bottom-32 -left-32 w-64 h-64 bg-glow-accent/8 rounded-full blur-[100px] pointer-events-none" />
 
@@ -63,14 +102,16 @@ const BlogPostPage = () => {
               <div className="flex flex-wrap items-center gap-4 text-xs font-mono text-muted-foreground mb-6">
                 <span className="flex items-center gap-1.5"><Calendar className="w-3 h-3" />{date}</span>
                 <span className="flex items-center gap-1.5"><User className="w-3 h-3" />{post.author}</span>
-                <a
-                  href={post.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center gap-1.5 text-primary/70 hover:text-primary transition-colors"
-                >
-                  <ExternalLink className="w-3 h-3" />Original
-                </a>
+                {post.url && (
+                  <a
+                    href={post.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-1.5 text-primary/70 hover:text-primary transition-colors"
+                  >
+                    <ExternalLink className="w-3 h-3" />Original
+                  </a>
+                )}
               </div>
 
               <h1 className="text-3xl md:text-5xl font-display font-bold text-gradient-primary glow-text mb-10">
@@ -78,7 +119,7 @@ const BlogPostPage = () => {
               </h1>
 
               <div
-                className="prose-custom text-foreground/90 leading-[2] text-base md:text-lg whitespace-pre-line"
+                className="text-foreground/90 leading-[2] text-base md:text-lg whitespace-pre-line"
                 dangerouslySetInnerHTML={{ __html: post.content }}
               />
             </div>
