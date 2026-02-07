@@ -1,0 +1,52 @@
+import { useState, useEffect } from 'react';
+import { supabase } from '@/integrations/supabase/client';
+
+interface UserPost {
+  id: string;
+  title: string;
+  content: string;
+  published: boolean;
+  created_at: string;
+  updated_at: string;
+  user_id: string;
+  author_name?: string;
+}
+
+export function useUserPosts() {
+  const [posts, setPosts] = useState<UserPost[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchPosts = async () => {
+      const { data, error } = await supabase
+        .from('blog_posts')
+        .select('*')
+        .eq('published', true)
+        .order('created_at', { ascending: false });
+
+      if (!error && data) {
+        // Fetch author names
+        const userIds = [...new Set(data.map((p: any) => p.user_id))];
+        const { data: profiles } = await supabase
+          .from('profiles')
+          .select('user_id, display_name')
+          .in('user_id', userIds);
+
+        const profileMap = new Map(
+          (profiles || []).map((p: any) => [p.user_id, p.display_name])
+        );
+
+        setPosts(
+          data.map((p: any) => ({
+            ...p,
+            author_name: profileMap.get(p.user_id) || 'Anonymous',
+          }))
+        );
+      }
+      setLoading(false);
+    };
+    fetchPosts();
+  }, []);
+
+  return { posts, loading };
+}

@@ -1,10 +1,17 @@
 import { motion } from 'framer-motion';
-import { BookOpen } from 'lucide-react';
+import { BookOpen, PenLine, LogIn, LogOut } from 'lucide-react';
 import { useNavigate, useLocation } from 'react-router-dom';
+import { useAuth } from '@/hooks/useAuth';
 
 const Navbar = () => {
   const navigate = useNavigate();
   const location = useLocation();
+  const { user, signOut } = useAuth();
+
+  const handleSignOut = async () => {
+    await signOut();
+    navigate('/');
+  };
 
   return (
     <motion.nav
@@ -26,20 +33,40 @@ const Navbar = () => {
           </span>
         </button>
 
-        <div className="flex items-center gap-4">
-          {location.pathname !== '/' && (
+        <div className="flex items-center gap-2 md:gap-3">
+          {user && (
             <button
-              onClick={() => navigate('/')}
-              className="text-sm text-muted-foreground hover:text-foreground transition-colors font-mono"
+              onClick={() => navigate('/write')}
+              className="flex items-center gap-1.5 text-sm px-3 py-1.5 rounded-full bg-primary/10 text-primary hover:bg-primary/20 transition-colors font-mono"
             >
-              Home
+              <PenLine className="w-3.5 h-3.5" />
+              <span className="hidden sm:inline">Likho</span>
             </button>
           )}
+
+          {user ? (
+            <button
+              onClick={handleSignOut}
+              className="flex items-center gap-1.5 text-sm px-3 py-1.5 rounded-full glass text-muted-foreground hover:text-primary transition-colors font-mono"
+            >
+              <LogOut className="w-3.5 h-3.5" />
+              <span className="hidden sm:inline">Logout</span>
+            </button>
+          ) : (
+            <button
+              onClick={() => navigate('/auth')}
+              className="flex items-center gap-1.5 text-sm px-3 py-1.5 rounded-full bg-primary/10 text-primary hover:bg-primary/20 transition-colors font-mono"
+            >
+              <LogIn className="w-3.5 h-3.5" />
+              <span className="hidden sm:inline">Login</span>
+            </button>
+          )}
+
           <a
             href="https://habu-says.blogspot.com/"
             target="_blank"
             rel="noopener noreferrer"
-            className="text-sm px-3 py-1.5 rounded-full glass text-muted-foreground hover:text-primary transition-colors font-mono"
+            className="text-sm px-3 py-1.5 rounded-full glass text-muted-foreground hover:text-primary transition-colors font-mono hidden md:block"
           >
             Blogspot ↗
           </a>
