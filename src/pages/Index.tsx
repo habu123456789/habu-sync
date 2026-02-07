@@ -53,9 +53,9 @@ const Index = () => {
           </div>
         )}
 
-        {error && (
-          <div className="glass rounded-2xl p-8 text-center">
-            <p className="text-muted-foreground">{error}</p>
+        {error && !blogspotPosts.length && (
+          <div className="glass rounded-2xl p-6 text-center">
+            <p className="text-sm text-muted-foreground">Posts load nahi ho paye</p>
           </div>
         )}
 

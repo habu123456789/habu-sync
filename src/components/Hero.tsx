@@ -2,7 +2,7 @@ import { motion } from 'framer-motion';
 
 const Hero = () => {
   return (
-    <section className="relative min-h-[70vh] flex items-center justify-center overflow-hidden px-4">
+    <section className="relative min-h-[50vh] flex items-center justify-center overflow-hidden px-4">
       {/* Floating liquid blobs */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden">
         <div className="absolute top-20 left-10 w-72 h-72 bg-glow-primary/10 liquid-drop animate-float blur-3xl" />
@@ -25,12 +25,12 @@ const Hero = () => {
           ✦ stories · poetry · feelings ✦
         </motion.div>
 
-        <h1 className="text-5xl md:text-7xl lg:text-8xl font-display font-bold tracking-tight mb-6">
+        <h1 className="text-4xl md:text-5xl lg:text-6xl font-display font-bold tracking-tight mb-4">
           <span className="text-gradient-primary glow-text">Habu</span>
           <span className="text-foreground"> Says</span>
         </h1>
 
-        <p className="text-lg md:text-xl text-muted-foreground max-w-xl mx-auto leading-relaxed">
+        <p className="text-sm md:text-base text-muted-foreground max-w-lg mx-auto leading-relaxed">
           Alfaaz jo dil se nikalte hain, kahaniyaan jo rooh ko chhoo jaati hain.
         </p>
 

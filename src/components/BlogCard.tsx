@@ -38,11 +38,11 @@ const BlogCard = ({ post, index, onClick, stripHtml }: BlogCardProps) => {
           <span className="text-primary/70">{post.author}</span>
         </div>
 
-        <h3 className="text-xl md:text-2xl font-display font-semibold text-foreground mb-3 group-hover:text-gradient-primary transition-all duration-300">
+        <h3 className="text-base md:text-lg font-display font-semibold text-foreground mb-2 group-hover:text-gradient-primary transition-all duration-300">
           {post.title}
         </h3>
 
-        <p className="text-muted-foreground leading-relaxed line-clamp-3 text-sm md:text-base">
+        <p className="text-muted-foreground leading-relaxed line-clamp-3 text-xs md:text-sm">
           {plainText}
         </p>
 
