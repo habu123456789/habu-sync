@@ -43,7 +43,7 @@ export function useBlogPosts() {
         const data = await res.json();
         setPosts(parseFeed(data));
       } catch (e) {
-        setError('Blog posts load nahi ho paye. Please try again.');
+        console.error('Blog feed error:', e);
       } finally {
         setLoading(false);
       }
