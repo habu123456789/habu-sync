@@ -2,10 +2,12 @@ import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import { useBlogPosts } from '@/hooks/useBlogPosts';
 import { useEffect, useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
+import { useAuth } from '@/hooks/useAuth';
 import { motion } from 'framer-motion';
-import { ArrowLeft, Calendar, User, ExternalLink } from 'lucide-react';
+import { ArrowLeft, Calendar, User, ExternalLink, Pencil, Trash2, Link as LinkIcon } from 'lucide-react';
 import DOMPurify from 'dompurify';
 import Navbar from '@/components/Navbar';
+import { toast } from 'sonner';
 
 const BlogPostPage = () => {
   const { postId } = useParams();
@@ -13,9 +15,11 @@ const BlogPostPage = () => {
   const location = useLocation();
   const isLocal = location.pathname.includes('/post/local/');
   const { posts, loading: blogLoading } = useBlogPosts();
+  const { user } = useAuth();
 
   const [localPost, setLocalPost] = useState<any>(null);
   const [localLoading, setLocalLoading] = useState(isLocal);
+  const [deleting, setDeleting] = useState(false);
 
   useEffect(() => {
     if (isLocal && postId) {
@@ -23,15 +27,19 @@ const BlogPostPage = () => {
         .from('blog_posts')
         .select('*')
         .eq('id', postId)
-        .single()
+        .maybeSingle()
         .then(async ({ data }) => {
           if (data) {
-            const { data: profile } = await supabase
-              .from('profiles')
-              .select('display_name')
-              .eq('user_id', data.user_id)
-              .single();
-            setLocalPost({ ...data, author: profile?.display_name || 'User' });
+            let authorName = (data as any).author_name || 'Guest';
+            if (data.user_id) {
+              const { data: profile } = await supabase
+                .from('profiles')
+                .select('display_name')
+                .eq('user_id', data.user_id)
+                .maybeSingle();
+              authorName = profile?.display_name || 'User';
+            }
+            setLocalPost({ ...data, author: authorName });
           }
           setLocalLoading(false);
         });
@@ -48,9 +56,25 @@ const BlogPostPage = () => {
           published: localPost.created_at,
           url: '',
           author: localPost.author,
+          social_link: localPost.social_link,
         }
       : null
     : posts.find((p) => encodeURIComponent(p.title) === postId);
+
+  const isOwner = isLocal && localPost && user && localPost.user_id === user.id;
+
+  const handleDelete = async () => {
+    if (!confirm('Kya aap sach mein yeh post delete karna chahte hain?')) return;
+    setDeleting(true);
+    const { error } = await supabase.from('blog_posts').delete().eq('id', postId!);
+    if (error) {
+      toast.error('Delete nahi ho paya: ' + error.message);
+      setDeleting(false);
+    } else {
+      toast.success('Post delete ho gaya!');
+      navigate('/');
+    }
+  };
 
   if (loading) {
     return (
@@ -106,7 +130,37 @@ const BlogPostPage = () => {
                     <ExternalLink className="w-3 h-3" />Original
                   </a>
                 )}
+                {(post as any).social_link && (
+                  <a
+                    href={(post as any).social_link}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-1.5 text-primary/70 hover:text-primary transition-colors"
+                  >
+                    <LinkIcon className="w-3 h-3" />Social
+                  </a>
+                )}
               </div>
+
+              {isOwner && (
+                <div className="flex gap-2 mb-6">
+                  <button
+                    onClick={() => navigate(`/edit/${postId}`)}
+                    className="inline-flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-full bg-primary/10 text-primary hover:bg-primary/20 transition-colors font-mono"
+                  >
+                    <Pencil className="w-3 h-3" />
+                    Edit
+                  </button>
+                  <button
+                    onClick={handleDelete}
+                    disabled={deleting}
+                    className="inline-flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-full bg-destructive/10 text-destructive hover:bg-destructive/20 transition-colors font-mono disabled:opacity-50"
+                  >
+                    <Trash2 className="w-3 h-3" />
+                    {deleting ? 'Deleting...' : 'Delete'}
+                  </button>
+                </div>
+              )}
 
               <h1 className="text-2xl md:text-3xl font-display font-bold text-gradient-primary glow-text mb-8">
                 {post.title}
