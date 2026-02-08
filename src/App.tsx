@@ -8,6 +8,7 @@ import Index from "./pages/Index";
 import BlogPostPage from "./pages/BlogPostPage";
 import AuthPage from "./pages/AuthPage";
 import WritePage from "./pages/WritePage";
+import EditPostPage from "./pages/EditPostPage";
 import AboutPage from "./pages/AboutPage";
 import NotFound from "./pages/NotFound";
 
@@ -26,6 +27,7 @@ const App = () => (
             <Route path="/post/local/:postId" element={<BlogPostPage />} />
             <Route path="/auth" element={<AuthPage />} />
             <Route path="/write" element={<WritePage />} />
+            <Route path="/edit/:postId" element={<EditPostPage />} />
             <Route path="/about" element={<AboutPage />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
