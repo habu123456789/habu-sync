@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { motion } from 'framer-motion';
 import { ArrowLeft, Calendar, User, ExternalLink } from 'lucide-react';
+import DOMPurify from 'dompurify';
 import Navbar from '@/components/Navbar';
 
 const BlogPostPage = () => {
@@ -113,7 +114,10 @@ const BlogPostPage = () => {
 
               <div
                 className="text-foreground/90 leading-[1.8] text-sm md:text-base whitespace-pre-line"
-                dangerouslySetInnerHTML={{ __html: post.content }}
+                dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(post.content, {
+                  ALLOWED_TAGS: ['p', 'br', 'strong', 'em', 'u', 'h1', 'h2', 'h3', 'ul', 'ol', 'li', 'a', 'blockquote', 'img', 'span', 'div'],
+                  ALLOWED_ATTR: ['href', 'target', 'rel', 'src', 'alt', 'class']
+                }) }}
               />
             </div>
           </div>
