@@ -39,7 +39,7 @@ export function useUserPosts() {
         setPosts(
           data.map((p: any) => ({
             ...p,
-            author_name: profileMap.get(p.user_id) || 'Anonymous',
+            author_name: profileMap.get(p.user_id) || undefined,
           }))
         );
       }

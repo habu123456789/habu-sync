@@ -6,6 +6,7 @@ import Hero from '@/components/Hero';
 import BlogCard from '@/components/BlogCard';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
+import HinglishClock from '@/components/HinglishClock';
 import { motion } from 'framer-motion';
 import { Loader2 } from 'lucide-react';
 
@@ -23,7 +24,7 @@ const Index = () => {
       content: p.content,
       published: p.created_at,
       url: '',
-      author: p.author_name || 'User',
+      author: p.author_name || '',
       isLocal: true as const,
     })),
     ...blogspotPosts,
@@ -73,18 +74,7 @@ const Index = () => {
           ))}
         </div>
 
-        {!loading && allPosts.length > 0 && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 1 }}
-            className="mt-16 text-center"
-          >
-            <p className="text-sm text-muted-foreground font-mono">
-              ✦ {allPosts.length} posts — Blogspot + User posts automatically synced ✦
-            </p>
-          </motion.div>
-        )}
+        {!loading && <HinglishClock />}
       </section>
       <Footer />
     </div>
