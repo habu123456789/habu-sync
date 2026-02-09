@@ -1,15 +1,18 @@
 import { motion } from 'framer-motion';
 import type { BlogPost } from '@/hooks/useBlogPosts';
-import { Calendar } from 'lucide-react';
+import { Calendar, Pencil, Trash2 } from 'lucide-react';
 
 interface BlogCardProps {
   post: BlogPost;
   index: number;
   onClick: () => void;
   stripHtml: (html: string) => string;
+  isOwner?: boolean;
+  onEdit?: () => void;
+  onDelete?: () => void;
 }
 
-const BlogCard = ({ post, index, onClick, stripHtml }: BlogCardProps) => {
+const BlogCard = ({ post, index, onClick, stripHtml, isOwner, onEdit, onDelete }: BlogCardProps) => {
   const plainText = stripHtml(post.content);
   const date = new Date(post.published).toLocaleDateString('hi-IN', {
     year: 'numeric',
@@ -25,7 +28,6 @@ const BlogCard = ({ post, index, onClick, stripHtml }: BlogCardProps) => {
       onClick={onClick}
       className="group cursor-pointer glass glass-hover rounded-2xl p-6 md:p-8 relative overflow-hidden"
     >
-      {/* Glow effect on hover */}
       <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none">
         <div className="absolute -top-20 -right-20 w-40 h-40 bg-glow-primary/10 rounded-full blur-3xl" />
       </div>
@@ -50,9 +52,30 @@ const BlogCard = ({ post, index, onClick, stripHtml }: BlogCardProps) => {
           {plainText}
         </p>
 
-        <div className="mt-5 flex items-center gap-2 text-primary text-sm font-medium opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-          <span>Pura padho</span>
-          <span className="transition-transform group-hover:translate-x-1">→</span>
+        <div className="mt-5 flex items-center justify-between">
+          <div className="flex items-center gap-2 text-primary text-sm font-medium opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+            <span>Pura padho</span>
+            <span className="transition-transform group-hover:translate-x-1">→</span>
+          </div>
+
+          {isOwner && (
+            <div className="flex items-center gap-2">
+              <button
+                onClick={(e) => { e.stopPropagation(); onEdit?.(); }}
+                className="inline-flex items-center gap-1 text-xs px-2.5 py-1 rounded-full bg-primary/10 text-primary hover:bg-primary/20 transition-colors font-mono"
+              >
+                <Pencil className="w-3 h-3" />
+                Edit
+              </button>
+              <button
+                onClick={(e) => { e.stopPropagation(); onDelete?.(); }}
+                className="inline-flex items-center gap-1 text-xs px-2.5 py-1 rounded-full bg-destructive/10 text-destructive hover:bg-destructive/20 transition-colors font-mono"
+              >
+                <Trash2 className="w-3 h-3" />
+                Delete
+              </button>
+            </div>
+          )}
         </div>
       </div>
     </motion.article>

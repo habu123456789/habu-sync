@@ -2,6 +2,7 @@ import { useNavigate } from 'react-router-dom';
 import { useBlogPosts } from '@/hooks/useBlogPosts';
 import { useUserPosts } from '@/hooks/useUserPosts';
 import { useAuth } from '@/hooks/useAuth';
+import { supabase } from '@/integrations/supabase/client';
 import Hero from '@/components/Hero';
 import BlogCard from '@/components/BlogCard';
 import Navbar from '@/components/Navbar';
@@ -9,12 +10,24 @@ import Footer from '@/components/Footer';
 import HinglishClock from '@/components/HinglishClock';
 import { motion } from 'framer-motion';
 import { Loader2 } from 'lucide-react';
+import { toast } from 'sonner';
 
 const Index = () => {
   const { posts: blogspotPosts, loading, error, stripHtml } = useBlogPosts();
-  const { posts: userPosts, loading: userPostsLoading } = useUserPosts();
+  const { posts: userPosts, loading: userPostsLoading, refetch } = useUserPosts();
   const { user } = useAuth();
   const navigate = useNavigate();
+
+  const handleDelete = async (postId: string) => {
+    if (!confirm('Kya aap sach mein yeh post delete karna chahte hain?')) return;
+    const { error } = await supabase.from('blog_posts').delete().eq('id', postId);
+    if (error) {
+      toast.error('Delete nahi ho paya: ' + error.message);
+    } else {
+      toast.success('Post delete ho gaya!');
+      refetch();
+    }
+  };
 
   // Combine user-created published posts with blogspot posts
   const allPosts = [
@@ -26,6 +39,7 @@ const Index = () => {
       url: '',
       author: p.author_name || '',
       isLocal: true as const,
+      user_id: p.user_id,
     })),
     ...blogspotPosts,
   ].sort((a, b) => new Date(b.published).getTime() - new Date(a.published).getTime());
@@ -63,6 +77,9 @@ const Index = () => {
               post={post}
               index={i}
               stripHtml={stripHtml}
+              isOwner={'isLocal' in post && !!user && ('user_id' in post) && (post as any).user_id === user.id}
+              onEdit={() => navigate(`/edit/${post.id}`)}
+              onDelete={() => handleDelete(post.id)}
               onClick={() => {
                 if ('isLocal' in post) {
                   navigate(`/post/local/${post.id}`);
