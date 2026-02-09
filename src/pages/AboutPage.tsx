@@ -4,11 +4,13 @@ import Footer from '@/components/Footer';
 import { ExternalLink } from 'lucide-react';
 
 const socials = [
-  { name: 'Twitter / X', url: 'https://twitter.com/habu_in', icon: '𝕏' },
-  { name: 'Medium', url: 'https://medium.com/@habu', icon: 'M' },
-  { name: 'LinkedIn', url: 'https://linkedin.com/in/habu-in', icon: 'in' },
-  { name: 'Instagram', url: 'https://instagram.com/habu.in', icon: '📷' },
-  { name: 'GitHub', url: 'https://github.com/habu-in', icon: '⌨' },
+  { name: 'Twitter / X', url: 'https://x.com/Dynnesays', icon: '𝕏' },
+  { name: 'Medium', url: 'https://medium.com/@golu468067', icon: 'M' },
+  { name: 'LinkedIn', url: 'https://www.linkedin.com/in/narendra-saini-396910283', icon: 'in' },
+  { name: 'Instagram', url: 'https://www.instagram.com/habu.in/', icon: '📷' },
+  { name: 'GitHub', url: 'https://github.com/habu123456789', icon: '⌨' },
+  { name: 'Snapchat', url: 'https://www.snapchat.com/@ur_habu', icon: '👻' },
+  { name: 'Email', url: 'mailto:HABUILY@HOTMAIL.COM', icon: '✉' },
 ];
 
 const links = [
