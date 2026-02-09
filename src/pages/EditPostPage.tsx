@@ -56,6 +56,22 @@ const EditPostPage = () => {
       return;
     }
 
+    if (title.trim().length > 200) {
+      toast.error('Title 200 characters se zyada nahi ho sakta!');
+      return;
+    }
+
+    if (content.trim().length > 50000) {
+      toast.error('Content bohot lamba hai!');
+      return;
+    }
+
+    const trimmedLink = socialLink.trim();
+    if (trimmedLink && !/^https?:\/\//.test(trimmedLink)) {
+      toast.error('Social link ek valid URL hona chahiye (https:// se shuru hona chahiye)!');
+      return;
+    }
+
     setSaving(true);
     const { error } = await supabase
       .from('blog_posts')

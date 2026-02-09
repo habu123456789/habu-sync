@@ -41,13 +41,15 @@ const Navbar = () => {
             <User className="w-3.5 h-3.5" />
             <span className="hidden sm:inline">About</span>
           </button>
-          <button
-            onClick={() => navigate('/write')}
-            className="flex items-center gap-1.5 text-sm px-3 py-1.5 rounded-full bg-primary/10 text-primary hover:bg-primary/20 transition-colors font-mono"
-          >
-            <PenLine className="w-3.5 h-3.5" />
-            <span className="hidden sm:inline">Likho</span>
-          </button>
+          {user && (
+            <button
+              onClick={() => navigate('/write')}
+              className="flex items-center gap-1.5 text-sm px-3 py-1.5 rounded-full bg-primary/10 text-primary hover:bg-primary/20 transition-colors font-mono"
+            >
+              <PenLine className="w-3.5 h-3.5" />
+              <span className="hidden sm:inline">Likho</span>
+            </button>
+          )}
 
           {user ? (
             <button
