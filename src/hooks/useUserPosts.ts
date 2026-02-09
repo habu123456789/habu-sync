@@ -16,37 +16,39 @@ export function useUserPosts() {
   const [posts, setPosts] = useState<UserPost[]>([]);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    const fetchPosts = async () => {
-      const { data, error } = await supabase
-        .from('blog_posts')
-        .select('*')
-        .eq('published', true)
-        .order('created_at', { ascending: false });
+  const fetchPosts = async () => {
+    const { data, error } = await supabase
+      .from('blog_posts')
+      .select('*')
+      .eq('published', true)
+      .order('created_at', { ascending: false });
 
-      if (!error && data) {
-        // Fetch author names
-        const userIds = [...new Set(data.map((p: any) => p.user_id))];
+    if (!error && data) {
+      const userIds = [...new Set(data.map((p: any) => p.user_id).filter(Boolean))];
+      let profileMap = new Map<string, string>();
+      if (userIds.length > 0) {
         const { data: profiles } = await supabase
           .from('profiles')
           .select('user_id, display_name')
           .in('user_id', userIds);
-
-        const profileMap = new Map(
+        profileMap = new Map(
           (profiles || []).map((p: any) => [p.user_id, p.display_name])
         );
-
-        setPosts(
-          data.map((p: any) => ({
-            ...p,
-            author_name: profileMap.get(p.user_id) || undefined,
-          }))
-        );
       }
-      setLoading(false);
-    };
+
+      setPosts(
+        data.map((p: any) => ({
+          ...p,
+          author_name: profileMap.get(p.user_id) || undefined,
+        }))
+      );
+    }
+    setLoading(false);
+  };
+
+  useEffect(() => {
     fetchPosts();
   }, []);
 
-  return { posts, loading };
+  return { posts, loading, refetch: fetchPosts };
 }

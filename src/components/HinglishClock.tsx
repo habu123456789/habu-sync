@@ -50,7 +50,7 @@ const HinglishClock = () => {
     now.getHours(), now.getMinutes(), now.getSeconds()
   );
 
-  const pad = (n: number) => String(n).padStart(2, '0');
+  
 
   return (
     <motion.div
@@ -59,18 +59,9 @@ const HinglishClock = () => {
       transition={{ delay: 1 }}
       className="mt-16 text-center space-y-4"
     >
-      {/* Digital clock */}
-      <div className="font-mono text-3xl md:text-4xl font-bold text-primary tracking-widest">
-        {pad(now.getHours())}
-        <span className="animate-pulse">:</span>
-        {pad(now.getMinutes())}
-        <span className="animate-pulse">:</span>
-        {pad(now.getSeconds())}
-      </div>
-
-      {/* Hinglish time */}
-      <p className="text-sm text-muted-foreground font-mono">
-        {ampm} ke {hText} baje, {mText} minute, {sText} second
+      {/* Hinglish time only */}
+      <p className="text-base md:text-lg text-primary font-mono font-semibold">
+        🕐 {ampm} ke {hText} baje, {mText} minute, {sText} second
       </p>
 
       {/* Rotating quote */}
