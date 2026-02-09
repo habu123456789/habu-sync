@@ -12,7 +12,7 @@ const WritePage = () => {
   const navigate = useNavigate();
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
-  const [authorName, setAuthorName] = useState('');
+  
   const [socialLink, setSocialLink] = useState('');
   const [publishing, setPublishing] = useState(false);
 
@@ -24,14 +24,30 @@ const WritePage = () => {
     );
   }
 
+  if (!user) {
+    navigate('/auth');
+    return null;
+  }
+
   const handlePublish = async (asDraft: boolean) => {
     if (!title.trim() || !content.trim()) {
       toast.error('Title aur content dono zaroori hain!');
       return;
     }
 
-    if (!user && !authorName.trim()) {
-      toast.error('Apna naam likhna zaroori hai!');
+    if (title.trim().length > 200) {
+      toast.error('Title 200 characters se zyada nahi ho sakta!');
+      return;
+    }
+
+    if (content.trim().length > 50000) {
+      toast.error('Content bohot lamba hai!');
+      return;
+    }
+
+    const trimmedLink = socialLink.trim();
+    if (trimmedLink && !/^https?:\/\//.test(trimmedLink)) {
+      toast.error('Social link ek valid URL hona chahiye (https:// se shuru hona chahiye)!');
       return;
     }
 
@@ -39,9 +55,8 @@ const WritePage = () => {
     const { error } = await supabase.from('blog_posts').insert({
       title: title.trim(),
       content: content.trim(),
-      user_id: user?.id ?? null,
-      author_name: user ? null : authorName.trim(),
-      social_link: socialLink.trim() || null,
+      user_id: user.id,
+      social_link: trimmedLink || null,
       published: !asDraft,
     } as any);
 
@@ -80,18 +95,6 @@ const WritePage = () => {
               </h2>
 
               <div className="space-y-6">
-                {!user && (
-                  <div>
-                    <label className="text-xs font-mono text-muted-foreground mb-1.5 block">Apna Naam</label>
-                    <input
-                      type="text"
-                      value={authorName}
-                      onChange={(e) => setAuthorName(e.target.value)}
-                      className="w-full px-4 py-3 rounded-xl bg-secondary border border-border text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/20 transition-all"
-                      placeholder="Apna naam likho..."
-                    />
-                  </div>
-                )}
                 <div>
                   <label className="text-xs font-mono text-muted-foreground mb-1.5 block">Title</label>
                   <input
