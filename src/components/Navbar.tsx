@@ -1,13 +1,14 @@
 import { motion } from 'framer-motion';
-import { BookOpen, PenLine, LogIn, LogOut, User } from 'lucide-react';
+import { BookOpen, PenLine, LogIn, LogOut, User, Sun, Moon } from 'lucide-react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
+import { useTheme } from 'next-themes';
 
 const Navbar = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { user, signOut } = useAuth();
-
+  const { theme, setTheme } = useTheme();
   const handleSignOut = async () => {
     await signOut();
     navigate('/');
@@ -34,6 +35,13 @@ const Navbar = () => {
         </button>
 
         <div className="flex items-center gap-2 md:gap-3">
+          <button
+            onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+            className="flex items-center justify-center w-8 h-8 rounded-full glass text-muted-foreground hover:text-primary transition-colors"
+            aria-label="Toggle theme"
+          >
+            {theme === 'dark' ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
+          </button>
           <button
             onClick={() => navigate('/about')}
             className="flex items-center gap-1.5 text-sm px-3 py-1.5 rounded-full glass text-muted-foreground hover:text-primary transition-colors font-mono"
