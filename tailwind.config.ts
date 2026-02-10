@@ -14,10 +14,10 @@ export default {
     },
     extend: {
       fontFamily: {
-        display: ['"Space Grotesk"', 'sans-serif'],
-        body: ['"Space Grotesk"', 'sans-serif'],
-        urdu: ['"Noto Nastaliq Urdu"', 'serif'],
-        mono: ['"JetBrains Mono"', 'monospace'],
+        display: ['"Playfair Display"', 'serif'],
+        body: ['"Lora"', 'serif'],
+        urdu: ['"Lora"', 'serif'],
+        mono: ['"Special Elite"', 'cursive'],
       },
       colors: {
         border: "hsl(var(--border))",
