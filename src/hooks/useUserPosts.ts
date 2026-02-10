@@ -24,24 +24,7 @@ export function useUserPosts() {
       .order('created_at', { ascending: false });
 
     if (!error && data) {
-      const userIds = [...new Set(data.map((p: any) => p.user_id).filter(Boolean))];
-      let profileMap = new Map<string, string>();
-      if (userIds.length > 0) {
-        const { data: profiles } = await supabase
-          .from('profiles')
-          .select('user_id, display_name')
-          .in('user_id', userIds);
-        profileMap = new Map(
-          (profiles || []).map((p: any) => [p.user_id, p.display_name])
-        );
-      }
-
-      setPosts(
-        data.map((p: any) => ({
-          ...p,
-          author_name: profileMap.get(p.user_id) || undefined,
-        }))
-      );
+      setPosts(data as UserPost[]);
     }
     setLoading(false);
   };

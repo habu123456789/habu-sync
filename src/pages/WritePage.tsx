@@ -52,12 +52,25 @@ const WritePage = () => {
     }
 
     setPublishing(true);
+
+    // Fetch author display name from profile
+    let authorName: string | null = null;
+    const { data: profile } = await supabase
+      .from('profiles')
+      .select('display_name')
+      .eq('user_id', user.id)
+      .maybeSingle();
+    if (profile?.display_name) {
+      authorName = profile.display_name;
+    }
+
     const { error } = await supabase.from('blog_posts').insert({
       title: title.trim(),
       content: content.trim(),
       user_id: user.id,
       social_link: trimmedLink || null,
       published: !asDraft,
+      author_name: authorName,
     } as any);
 
     if (error) {
