@@ -11,6 +11,7 @@ import WritePage from "./pages/WritePage";
 import EditPostPage from "./pages/EditPostPage";
 import AboutPage from "./pages/AboutPage";
 import ProfilePage from "./pages/ProfilePage";
+import ResetPasswordPage from "./pages/ResetPasswordPage";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -30,6 +31,7 @@ const App = () => (
             <Route path="/write" element={<WritePage />} />
             <Route path="/edit/:postId" element={<EditPostPage />} />
             <Route path="/profile/:userId" element={<ProfilePage />} />
+            <Route path="/reset-password" element={<ResetPasswordPage />} />
             <Route path="/about" element={<AboutPage />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
