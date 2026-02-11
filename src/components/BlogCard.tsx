@@ -1,6 +1,7 @@
 import { motion } from 'framer-motion';
 import type { BlogPost } from '@/hooks/useBlogPosts';
 import { Calendar, Pencil, Trash2 } from 'lucide-react';
+import LikeButton from '@/components/LikeButton';
 
 interface BlogCardProps {
   post: BlogPost;
@@ -39,7 +40,16 @@ const BlogCard = ({ post, index, onClick, stripHtml, isOwner, onEdit, onDelete }
           {post.author && (
             <>
               <span className="text-primary/30">·</span>
-              <span className="text-primary/50">{post.author}</span>
+              {post.isLocal && post.user_id ? (
+                <button
+                  onClick={(e) => { e.stopPropagation(); window.location.href = `/profile/${post.user_id}`; }}
+                  className="text-primary/50 hover:text-primary hover:underline transition-colors"
+                >
+                  {post.author}
+                </button>
+              ) : (
+                <span className="text-primary/50">{post.author}</span>
+              )}
             </>
           )}
         </div>
@@ -53,29 +63,35 @@ const BlogCard = ({ post, index, onClick, stripHtml, isOwner, onEdit, onDelete }
         </p>
 
         <div className="mt-5 flex items-center justify-between">
-          <div className="flex items-center gap-2 text-primary text-sm font-medium opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-            <span>Pura padho</span>
-            <span className="transition-transform group-hover:translate-x-1">→</span>
+          <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 text-primary text-sm font-medium opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+              <span>Pura padho</span>
+              <span className="transition-transform group-hover:translate-x-1">→</span>
+            </div>
           </div>
 
-          {isOwner && (
-            <div className="flex items-center gap-2">
-              <button
-                onClick={(e) => { e.stopPropagation(); onEdit?.(); }}
-                className="inline-flex items-center gap-1 text-xs px-2.5 py-1 rounded-full bg-primary/10 text-primary hover:bg-primary/20 transition-colors font-mono"
-              >
-                <Pencil className="w-3 h-3" />
-                Edit
-              </button>
-              <button
-                onClick={(e) => { e.stopPropagation(); onDelete?.(); }}
-                className="inline-flex items-center gap-1 text-xs px-2.5 py-1 rounded-full bg-destructive/10 text-destructive hover:bg-destructive/20 transition-colors font-mono"
-              >
-                <Trash2 className="w-3 h-3" />
-                Delete
-              </button>
-            </div>
-          )}
+          <div className="flex items-center gap-2">
+            {post.isLocal && <LikeButton postId={post.id} />}
+
+            {isOwner && (
+              <>
+                <button
+                  onClick={(e) => { e.stopPropagation(); onEdit?.(); }}
+                  className="inline-flex items-center gap-1 text-xs px-2.5 py-1 rounded-full bg-primary/10 text-primary hover:bg-primary/20 transition-colors font-mono"
+                >
+                  <Pencil className="w-3 h-3" />
+                  Edit
+                </button>
+                <button
+                  onClick={(e) => { e.stopPropagation(); onDelete?.(); }}
+                  className="inline-flex items-center gap-1 text-xs px-2.5 py-1 rounded-full bg-destructive/10 text-destructive hover:bg-destructive/20 transition-colors font-mono"
+                >
+                  <Trash2 className="w-3 h-3" />
+                  Delete
+                </button>
+              </>
+            )}
+          </div>
         </div>
       </div>
     </motion.article>
