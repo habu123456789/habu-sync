@@ -7,6 +7,8 @@ export interface BlogPost {
   published: string;
   url: string;
   author: string;
+  isLocal?: boolean;
+  user_id?: string;
 }
 
 const BLOG_FEED_URL = 'https://habu-says.blogspot.com/feeds/posts/default?alt=json&max-results=50';

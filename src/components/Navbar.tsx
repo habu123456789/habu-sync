@@ -51,6 +51,15 @@ const Navbar = () => {
           </button>
           {user && (
             <button
+              onClick={() => navigate(`/profile/${user.id}`)}
+              className="flex items-center gap-1.5 text-sm px-3 py-1.5 rounded-full glass text-muted-foreground hover:text-primary transition-colors font-mono"
+            >
+              <User className="w-3.5 h-3.5" />
+              <span className="hidden sm:inline">Profile</span>
+            </button>
+          )}
+          {user && (
+            <button
               onClick={() => navigate('/write')}
               className="flex items-center gap-1.5 text-sm px-3 py-1.5 rounded-full bg-primary/10 text-primary hover:bg-primary/20 transition-colors font-mono"
             >
