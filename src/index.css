@@ -148,6 +148,54 @@
     --glow-accent: 260 60% 60%;
     --surface-elevated: 210 45% 96%;
   }
+
+  .cyberpunk {
+    --background: 260 30% 6%;
+    --foreground: 180 100% 85%;
+
+    --card: 260 25% 10%;
+    --card-foreground: 180 100% 85%;
+
+    --popover: 260 25% 10%;
+    --popover-foreground: 180 100% 85%;
+
+    --primary: 320 100% 60%;
+    --primary-foreground: 260 30% 6%;
+
+    --secondary: 260 30% 15%;
+    --secondary-foreground: 180 80% 75%;
+
+    --muted: 260 25% 14%;
+    --muted-foreground: 260 20% 50%;
+
+    --accent: 180 100% 50%;
+    --accent-foreground: 260 30% 6%;
+
+    --destructive: 0 90% 55%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 260 40% 20%;
+    --input: 260 40% 20%;
+    --ring: 320 100% 60%;
+
+    --radius: 0.25rem;
+
+    --sidebar-background: 260 28% 8%;
+    --sidebar-foreground: 180 80% 75%;
+    --sidebar-primary: 320 100% 60%;
+    --sidebar-primary-foreground: 260 30% 6%;
+    --sidebar-accent: 260 30% 15%;
+    --sidebar-accent-foreground: 180 80% 75%;
+    --sidebar-border: 260 40% 20%;
+    --sidebar-ring: 320 100% 60%;
+
+    /* Custom tokens */
+    --glass-bg: 260 30% 10%;
+    --glass-border: 320 80% 40%;
+    --glow-primary: 320 100% 60%;
+    --glow-accent: 180 100% 50%;
+    --surface-elevated: 260 28% 9%;
+  }
 }
 
 @layer base {
@@ -189,6 +237,32 @@
     box-shadow: 
       0 12px 40px hsl(210 80% 55% / 0.15),
       inset 0 1px 0 hsl(0 0% 100% / 0.3);
+  }
+
+  .cyberpunk .glass {
+    background: hsl(260 30% 10% / 0.8);
+    backdrop-filter: blur(12px) saturate(1.6);
+    -webkit-backdrop-filter: blur(12px) saturate(1.6);
+    border: 1px solid hsl(320 100% 60% / 0.3);
+    box-shadow: 
+      0 0 15px hsl(320 100% 60% / 0.1),
+      0 0 30px hsl(180 100% 50% / 0.05),
+      inset 0 1px 0 hsl(320 100% 60% / 0.1);
+  }
+
+  .cyberpunk .glass-hover:hover {
+    background: hsl(260 30% 12% / 0.9);
+    border-color: hsl(320 100% 60% / 0.6);
+    box-shadow: 
+      0 0 25px hsl(320 100% 60% / 0.25),
+      0 0 50px hsl(180 100% 50% / 0.1);
+  }
+
+  .cyberpunk .glow-text {
+    text-shadow: 
+      0 0 20px hsl(320 100% 60% / 0.5),
+      0 0 40px hsl(320 100% 60% / 0.3),
+      0 0 80px hsl(180 100% 50% / 0.15);
   }
 
   .glass-hover {
