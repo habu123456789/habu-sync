@@ -196,6 +196,54 @@
     --glow-accent: 180 100% 50%;
     --surface-elevated: 260 28% 9%;
   }
+
+  .sunset {
+    --background: 25 50% 12%;
+    --foreground: 40 60% 88%;
+
+    --card: 20 45% 16%;
+    --card-foreground: 40 60% 88%;
+
+    --popover: 20 45% 16%;
+    --popover-foreground: 40 60% 88%;
+
+    --primary: 30 90% 55%;
+    --primary-foreground: 20 50% 8%;
+
+    --secondary: 15 35% 20%;
+    --secondary-foreground: 35 50% 78%;
+
+    --muted: 18 30% 18%;
+    --muted-foreground: 30 25% 52%;
+
+    --accent: 10 75% 50%;
+    --accent-foreground: 40 60% 95%;
+
+    --destructive: 0 70% 50%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 20 35% 24%;
+    --input: 20 35% 24%;
+    --ring: 30 90% 55%;
+
+    --radius: 0.75rem;
+
+    --sidebar-background: 22 45% 14%;
+    --sidebar-foreground: 35 50% 78%;
+    --sidebar-primary: 30 90% 55%;
+    --sidebar-primary-foreground: 20 50% 8%;
+    --sidebar-accent: 15 35% 20%;
+    --sidebar-accent-foreground: 35 50% 78%;
+    --sidebar-border: 20 35% 24%;
+    --sidebar-ring: 30 90% 55%;
+
+    /* Custom tokens */
+    --glass-bg: 20 40% 15%;
+    --glass-border: 30 50% 30%;
+    --glow-primary: 30 90% 55%;
+    --glow-accent: 10 75% 50%;
+    --surface-elevated: 22 42% 14%;
+  }
 }
 
 @layer base {

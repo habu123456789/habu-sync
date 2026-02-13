@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { BookOpen, PenLine, LogIn, LogOut, User, Sun, Moon, Droplets, Zap, ChevronDown } from 'lucide-react';
+import { BookOpen, PenLine, LogIn, LogOut, User, Sun, Moon, Droplets, Zap, ChevronDown, Sunset } from 'lucide-react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import { useTheme } from 'next-themes';
@@ -10,6 +10,7 @@ const themeOptions = [
   { id: 'light', label: 'Light', icon: Sun },
   { id: 'liquid-glass', label: 'Liquid Glass', icon: Droplets },
   { id: 'cyberpunk', label: 'Cyberpunk', icon: Zap },
+  { id: 'sunset', label: 'Sunset', icon: Sunset },
 ];
 
 const Navbar = () => {
