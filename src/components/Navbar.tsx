@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import { BookOpen, PenLine, LogIn, LogOut, User, Sun, Moon } from 'lucide-react';
+import { BookOpen, PenLine, LogIn, LogOut, User, Sun, Moon, Droplets } from 'lucide-react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import { useTheme } from 'next-themes';
@@ -36,11 +36,14 @@ const Navbar = () => {
 
         <div className="flex items-center gap-2 md:gap-3">
           <button
-            onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+            onClick={() => {
+              const next = theme === 'dark' ? 'light' : theme === 'light' ? 'liquid-glass' : 'dark';
+              setTheme(next);
+            }}
             className="flex items-center justify-center w-8 h-8 rounded-full glass text-muted-foreground hover:text-primary transition-colors"
             aria-label="Toggle theme"
           >
-            {theme === 'dark' ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
+            {theme === 'dark' ? <Sun className="w-4 h-4" /> : theme === 'liquid-glass' ? <Droplets className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
           </button>
           <button
             onClick={() => navigate('/about')}
