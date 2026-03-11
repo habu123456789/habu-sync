@@ -19,20 +19,20 @@ export default {
 				'cursive'
 			],
 			body: [
-				'Caveat',
-				'cursive'
+				'Quicksand',
+				'sans-serif'
 			],
 			urdu: [
-				'Caveat',
-				'cursive'
+				'Quicksand',
+				'sans-serif'
 			],
 			mono: [
-				'Caveat',
-				'cursive'
+				'Quicksand',
+				'sans-serif'
 			],
 			sans: [
-				'Caveat',
-				'cursive'
+				'Quicksand',
+				'sans-serif'
 			],
 			serif: [
 				'Dancing Script',
