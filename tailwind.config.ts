@@ -13,53 +13,32 @@ export default {
   		}
   	},
   	extend: {
-  		fontFamily: {
-  			display: [
-  				'Playfair Display"',
-  				'serif'
-  			],
-  			body: [
-  				'Lora"',
-  				'serif'
-  			],
-  			urdu: [
-  				'Lora"',
-  				'serif'
-  			],
-  			mono: [
-  				'SF Mono',
-  				'ui-monospace',
-  				'SFMono-Regular',
-  				'Menlo',
-  				'Monaco',
-  				'Consolas',
-  				'Liberation Mono',
-  				'Courier New',
-  				'monospace'
-  			],
-  			sans: [
-  				'DM Sans',
-  				'ui-sans-serif',
-  				'system-ui',
-  				'-apple-system',
-  				'BlinkMacSystemFont',
-  				'Segoe UI',
-  				'Roboto',
-  				'Helvetica Neue',
-  				'Arial',
-  				'Noto Sans',
-  				'sans-serif'
-  			],
-  			serif: [
-  				'Crimson Pro',
-  				'ui-serif',
-  				'Georgia',
-  				'Cambria',
-  				'Times New Roman',
-  				'Times',
-  				'serif'
-  			]
-  		},
+		fontFamily: {
+			display: [
+				'Dancing Script',
+				'cursive'
+			],
+			body: [
+				'Caveat',
+				'cursive'
+			],
+			urdu: [
+				'Caveat',
+				'cursive'
+			],
+			mono: [
+				'Caveat',
+				'cursive'
+			],
+			sans: [
+				'Caveat',
+				'cursive'
+			],
+			serif: [
+				'Dancing Script',
+				'cursive'
+			]
+		},
   		colors: {
   			border: 'hsl(var(--border))',
   			input: 'hsl(var(--input))',
