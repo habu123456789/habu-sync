@@ -71,6 +71,33 @@ export type Database = {
         }
         Relationships: []
       }
+      naam_jap_counts: {
+        Row: {
+          count: number
+          created_at: string
+          deity_name: string
+          id: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          count?: number
+          created_at?: string
+          deity_name: string
+          id?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          count?: number
+          created_at?: string
+          deity_name?: string
+          id?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       post_likes: {
         Row: {
           created_at: string
