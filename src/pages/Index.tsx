@@ -8,6 +8,7 @@ import BlogCard from '@/components/BlogCard';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import HinglishClock from '@/components/HinglishClock';
+import NaamJapCounter from '@/components/NaamJapCounter';
 import { motion } from 'framer-motion';
 import { Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
@@ -92,6 +93,7 @@ const Index = () => {
         </div>
 
         {!loading && <HinglishClock />}
+        <NaamJapCounter />
       </section>
       <Footer />
     </div>
