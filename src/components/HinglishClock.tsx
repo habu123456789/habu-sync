@@ -1,20 +1,5 @@
 import { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-
-const hinglishQuotes = [
-  "Zindagi mein kuch bada karna hai toh chhoti cheezein chhodni padti hain ⚡",
-  "Sapne wo nahi jo neend mein aayein, sapne wo hain jo neend na aane dein 🌙",
-  "Mehnat itni khamoshi se karo ki success shor machaye 🔥",
-  "Haar ke baad hi asli jung shuru hoti hai 💪",
-  "Waqt badalta hai, log badaltein hain, par asli insaan wahi hai jo khud ko nahi badalta 🎯",
-  "Kal kya hoga koi nahi jaanta, aaj ko best bana do 🌟",
-  "Mushkilein tujhe todne aayi hain, tu inhe tod de 🪨",
-  "Jo darr gaya, samjho wo marr gaya — himmat rakho! 🦁",
-  "Duniya mein koi kaam mushkil nahi, agar dil se karo toh ✨",
-  "Apne aap pe bharosa rakh, baaki sab adjust ho jayega 🙌",
-  "Success ka koi shortcut nahi hota, sirf hard work hota hai 🏆",
-  "Chalo aaj kuch naya seekhte hain, kal se better bante hain 📚",
-];
+import { motion } from 'framer-motion';
 
 const numberToHinglish: Record<number, string> = {
   0: 'Zero', 1: 'Ek', 2: 'Do', 3: 'Teen', 4: 'Chaar', 5: 'Paanch',
@@ -33,50 +18,26 @@ function timeToHinglish(h: number, m: number, s: number) {
 
 const HinglishClock = () => {
   const [now, setNow] = useState(new Date());
-  const [quoteIndex, setQuoteIndex] = useState(0);
 
   useEffect(() => {
     const timer = setInterval(() => setNow(new Date()), 1000);
     return () => clearInterval(timer);
   }, []);
 
-  useEffect(() => {
-    const mins = now.getMinutes();
-    const idx = Math.floor(mins / 5) % hinglishQuotes.length;
-    setQuoteIndex(idx);
-  }, [Math.floor(now.getMinutes() / 5)]);
-
   const { hText, mText, sText, ampm } = timeToHinglish(
     now.getHours(), now.getMinutes(), now.getSeconds()
   );
-
-  
 
   return (
     <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ delay: 1 }}
-      className="mt-16 text-center space-y-4"
+      className="mt-8 text-center"
     >
-      {/* Hinglish time only */}
       <p className="text-base md:text-lg text-primary font-mono font-semibold">
         🕐 {ampm} ke {hText} baje, {mText} minute, {sText} second
       </p>
-
-      {/* Rotating quote */}
-      <AnimatePresence mode="wait">
-        <motion.p
-          key={quoteIndex}
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: -10 }}
-          transition={{ duration: 0.5 }}
-          className="text-sm text-muted-foreground font-mono max-w-md mx-auto"
-        >
-          {hinglishQuotes[quoteIndex]}
-        </motion.p>
-      </AnimatePresence>
     </motion.div>
   );
 };
