@@ -214,17 +214,17 @@ const NaamJapCounter = () => {
       {/* Stats: Total + Today + Streak */}
       <div className="grid grid-cols-3 gap-3 mb-6">
         <div className="glass rounded-2xl p-3 text-center">
-          <p className="text-2xl font-display font-bold text-primary">{totalCount}</p>
+          <p className="text-2xl font-display font-bold text-primary">{hideCounts ? '•••' : totalCount}</p>
           <p className="text-[10px] text-muted-foreground font-mono">Total Jap 🔢</p>
         </div>
         <div className="glass rounded-2xl p-3 text-center">
-          <p className="text-2xl font-display font-bold text-primary">{todayCount}</p>
+          <p className="text-2xl font-display font-bold text-primary">{hideCounts ? '•••' : todayCount}</p>
           <p className="text-[10px] text-muted-foreground font-mono">Aaj ke Jap ✨</p>
         </div>
         <div className="glass rounded-2xl p-3 text-center">
           <div className="flex items-center justify-center gap-1">
             <Flame className="w-5 h-5 text-primary" />
-            <p className="text-2xl font-display font-bold text-primary">{streak}</p>
+            <p className="text-2xl font-display font-bold text-primary">{hideCounts ? '•••' : streak}</p>
           </div>
           <p className="text-[10px] text-muted-foreground font-mono">Din Streak 🔥</p>
         </div>
@@ -374,8 +374,8 @@ const NaamJapCounter = () => {
                 {/* Target progress bar */}
                 <div className="mt-3 px-1">
                   <div className="flex justify-between text-[10px] font-mono text-muted-foreground mb-1">
-                    <span>Target: {item.daily_target} 🎯</span>
-                    <span>{Math.min(100, Math.round((item.count / item.daily_target) * 100))}%</span>
+                    <span>Target: {hideCounts ? '•••' : item.daily_target} 🎯</span>
+                    <span>{hideCounts ? '•••' : `${Math.min(100, Math.round((item.count / item.daily_target) * 100))}%`}</span>
                   </div>
                   <div className="h-1.5 rounded-full bg-secondary overflow-hidden">
                     <motion.div
