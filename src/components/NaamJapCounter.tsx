@@ -374,8 +374,8 @@ const NaamJapCounter = () => {
                 {/* Target progress bar */}
                 <div className="mt-3 px-1">
                   <div className="flex justify-between text-[10px] font-mono text-muted-foreground mb-1">
-                    <span>Target: {item.daily_target} 🎯</span>
-                    <span>{Math.min(100, Math.round((item.count / item.daily_target) * 100))}%</span>
+                    <span>Target: {hideCounts ? '•••' : item.daily_target} 🎯</span>
+                    <span>{hideCounts ? '•••' : `${Math.min(100, Math.round((item.count / item.daily_target) * 100))}%`}</span>
                   </div>
                   <div className="h-1.5 rounded-full bg-secondary overflow-hidden">
                     <motion.div
