@@ -1,13 +1,11 @@
-import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { BookOpen, PenLine, LogIn, LogOut, User, Sun, Moon } from 'lucide-react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import { useTheme } from 'next-themes';
 
 const Navbar = () => {
   const navigate = useNavigate();
-  const location = useLocation();
   const { user, signOut } = useAuth();
   const { theme, setTheme } = useTheme();
 
@@ -36,7 +34,7 @@ const Navbar = () => {
             <BookOpen className="w-4 h-4 text-primary" />
           </div>
           <span className="font-display font-bold text-lg text-foreground">
-            Habu <span className="text-primary">Says</span>
+            Radhe <span className="text-primary">Radhe</span>
           </span>
         </button>
 
@@ -91,15 +89,6 @@ const Navbar = () => {
               <span className="hidden sm:inline">Login</span>
             </button>
           )}
-
-          <a
-            href="https://habu-says.blogspot.com/"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-sm px-3 py-1.5 rounded-full glass text-muted-foreground hover:text-primary transition-colors font-mono hidden md:block"
-          >
-            Blogspot ↗
-          </a>
         </div>
       </div>
     </motion.nav>
