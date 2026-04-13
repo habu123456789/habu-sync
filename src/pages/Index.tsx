@@ -57,6 +57,11 @@ const Index = () => {
         <DailyGitaShlok />
       </section>
 
+      {/* Naam Jap Counter - after shlok */}
+      <section className="max-w-4xl mx-auto px-4">
+        <NaamJapCounter />
+      </section>
+
       <section className="max-w-4xl mx-auto px-4 pb-20 mt-12">
         <motion.div
           initial={{ opacity: 0 }}
@@ -92,8 +97,7 @@ const Index = () => {
           ))}
         </div>
 
-        {!userPostsLoading && <HinglishClock />}
-        <NaamJapCounter />
+        <HinglishClock />
       </section>
       <Footer />
     </div>
