@@ -1,0 +1,1 @@
+ALTER TABLE public.naam_jap_counts ADD COLUMN daily_target integer NOT NULL DEFAULT 108;

@@ -102,6 +102,7 @@ export type Database = {
         Row: {
           count: number
           created_at: string
+          daily_target: number
           deity_name: string
           id: string
           updated_at: string
@@ -110,6 +111,7 @@ export type Database = {
         Insert: {
           count?: number
           created_at?: string
+          daily_target?: number
           deity_name: string
           id?: string
           updated_at?: string
@@ -118,6 +120,7 @@ export type Database = {
         Update: {
           count?: number
           created_at?: string
+          daily_target?: number
           deity_name?: string
           id?: string
           updated_at?: string
