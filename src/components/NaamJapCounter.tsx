@@ -319,16 +319,16 @@ const NaamJapCounter = () => {
                 initial={{ opacity: 0, scale: 0.9 }}
                 animate={{ opacity: 1, scale: 1 }}
                 exit={{ opacity: 0, scale: 0.9 }}
-                className="glass rounded-2xl p-4 flex items-center justify-between gap-3"
+                className="glass rounded-2xl p-5 flex items-center justify-between gap-4"
               >
                 <button
                   onClick={() => handleJap(item)}
-                  className="flex-1 text-left group"
+                  className="flex-1 text-left group px-4 py-3 rounded-xl bg-primary/10 hover:bg-primary/20 active:scale-95 transition-all"
                 >
-                  <span className="text-base font-display font-bold text-foreground group-hover:text-primary transition-colors">
+                  <span className="text-lg font-display font-bold text-foreground group-hover:text-primary transition-colors">
                     {item.deity_name}
                   </span>
-                  <span className="block text-xs text-muted-foreground font-mono mt-0.5">
+                  <span className="block text-sm text-muted-foreground font-mono mt-1">
                     Tap karke jap karo 🙏
                   </span>
                 </button>
