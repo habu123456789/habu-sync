@@ -22,16 +22,16 @@ const Hero = () => {
           transition={{ delay: 0.2, duration: 0.8 }}
           className="inline-block mb-6 px-4 py-1.5 rounded-full glass text-sm font-mono text-muted-foreground"
         >
-          ✦ stories · poetry · feelings ✦
+          ✦ bhakti · seva · naam jap ✦
         </motion.div>
 
         <h1 className="text-4xl md:text-5xl lg:text-6xl font-display font-bold tracking-tight mb-4">
-          <span className="text-gradient-primary glow-text">Habu</span>
-          <span className="text-foreground"> Says</span>
+          <span className="text-gradient-primary glow-text">Radhe</span>
+          <span className="text-foreground"> Radhe</span>
         </h1>
 
         <p className="text-sm md:text-base text-muted-foreground max-w-lg mx-auto leading-relaxed">
-          Alfaaz jo dil se nikalte hain, kahaniyaan jo rooh ko chhoo jaati hain.
+          Bhagwan ka naam lo, jap karo, aur apni bhakti ka hisaab rakho 🙏
         </p>
 
         <motion.div
