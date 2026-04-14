@@ -127,14 +127,24 @@ const NaamJapCounter = () => {
   };
 
   const handleJap = async (item: JapCount) => {
-    const newCount = item.count + 1;
-    setCounts((prev) => prev.map((c) => (c.id === item.id ? { ...c, count: newCount } : c)));
+    // Use functional update to get latest count, avoiding stale closure issues
+    let newCount = 0;
+    setCounts((prev) => prev.map((c) => {
+      if (c.id === item.id) {
+        newCount = c.count + 1;
+        return { ...c, count: newCount };
+      }
+      return c;
+    }));
+    // Small delay to ensure state settled
+    await new Promise(r => setTimeout(r, 0));
+    if (newCount === 0) newCount = item.count + 1;
     const { error } = await supabase
       .from('naam_jap_counts')
       .update({ count: newCount })
       .eq('id', item.id);
     if (error) {
-      setCounts((prev) => prev.map((c) => (c.id === item.id ? { ...c, count: item.count } : c)));
+      fetchCounts();
       toast.error('Count save nahi hua');
     } else {
       logDailyJap();
