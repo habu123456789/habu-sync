@@ -3,6 +3,11 @@ import { useUserPosts } from '@/hooks/useUserPosts';
 import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/integrations/supabase/client';
 import Hero from '@/components/Hero';
+import Navbar from '@/components/Navbar';
+import Footer from '@/components/Footer';
+import HinglishClock from '@/components/HinglishClock';
+import NaamJapCounter from '@/components/NaamJapCounter';
+import DailyGitaShlok from '@/components/DailyGitaShlok';
 import DailyAarti from '@/components/DailyAarti';
 import { toast } from 'sonner';
 
