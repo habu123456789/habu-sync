@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
@@ -13,9 +13,26 @@ interface JapCount {
   daily_target: number;
 }
 
+interface DailyLogRow {
+  id: string;
+  log_date: string;
+  total_count: number;
+}
+
 interface DailyLog {
   log_date: string;
   total_count: number;
+}
+
+function mergeDailyLogRows(rows: DailyLogRow[]): DailyLog[] {
+  const grouped = rows.reduce<Record<string, number>>((acc, row) => {
+    acc[row.log_date] = (acc[row.log_date] || 0) + row.total_count;
+    return acc;
+  }, {});
+
+  return Object.entries(grouped)
+    .map(([log_date, total_count]) => ({ log_date, total_count }))
+    .sort((a, b) => b.log_date.localeCompare(a.log_date));
 }
 
 const NaamJapCounter = () => {
@@ -30,93 +47,157 @@ const NaamJapCounter = () => {
   const [editingTarget, setEditingTarget] = useState<string | null>(null);
   const [targetInput, setTargetInput] = useState('');
 
-  const fetchCounts = useCallback(async () => {
-    if (!user) return;
-    const { data, error } = await supabase
-      .from('naam_jap_counts')
-      .select('id, deity_name, count, daily_target')
-      .eq('user_id', user.id)
-      .order('count', { ascending: false });
-    if (!error && data) setCounts(data);
-    setLoading(false);
-  }, [user]);
+  const todayStr = format(new Date(), 'yyyy-MM-dd');
+  const dailyLogQueueRef = useRef(Promise.resolve());
+  const countQueueRef = useRef<Record<string, Promise<void>>>({});
+  const dailyTotalsRef = useRef<Record<string, number>>({});
 
-  const fetchDailyLogs = useCallback(async () => {
-    if (!user) return;
-    const { data } = await supabase
-      .from('jap_daily_logs')
-      .select('log_date, total_count')
-      .eq('user_id', user.id)
-      .order('log_date', { ascending: false })
-      .limit(90);
-    if (data) {
-      setDailyLogs(data);
-      calculateStreak(data);
-    }
-  }, [user]);
-
-  const calculateStreak = (logs: DailyLog[]) => {
-    if (logs.length === 0) { setStreak(0); return; }
-    const today = format(new Date(), 'yyyy-MM-dd');
-    const sortedDates = logs.map(l => l.log_date).sort().reverse();
-    if (sortedDates[0] !== today && sortedDates[0] !== format(subDays(new Date(), 1), 'yyyy-MM-dd')) {
+  const calculateStreak = useCallback((logs: DailyLog[]) => {
+    if (logs.length === 0) {
       setStreak(0);
       return;
     }
+
+    const sortedDates = logs.map((log) => log.log_date).sort().reverse();
+    const yesterdayStr = format(subDays(new Date(), 1), 'yyyy-MM-dd');
+
+    if (sortedDates[0] !== todayStr && sortedDates[0] !== yesterdayStr) {
+      setStreak(0);
+      return;
+    }
+
     let count = 1;
     for (let i = 1; i < sortedDates.length; i++) {
       const diff = differenceInCalendarDays(new Date(sortedDates[i - 1]), new Date(sortedDates[i]));
       if (diff === 1) count++;
       else break;
     }
+
     setStreak(count);
-  };
+  }, [todayStr]);
+
+  const syncDailyLogs = useCallback((rows: DailyLogRow[]) => {
+    const mergedLogs = mergeDailyLogRows(rows);
+    dailyTotalsRef.current = mergedLogs.reduce<Record<string, number>>((acc, log) => {
+      acc[log.log_date] = log.total_count;
+      return acc;
+    }, {});
+    setDailyLogs(mergedLogs);
+  }, []);
+
+  const fetchCounts = useCallback(async () => {
+    if (!user) return;
+
+    const { data, error } = await supabase
+      .from('naam_jap_counts')
+      .select('id, deity_name, count, daily_target')
+      .eq('user_id', user.id)
+      .order('count', { ascending: false });
+
+    if (!error && data) setCounts(data);
+    setLoading(false);
+  }, [user]);
+
+  const fetchDailyLogs = useCallback(async () => {
+    if (!user) return;
+
+    const { data } = await supabase
+      .from('jap_daily_logs')
+      .select('id, log_date, total_count')
+      .eq('user_id', user.id)
+      .order('log_date', { ascending: false })
+      .limit(180);
+
+    if (data) syncDailyLogs(data);
+  }, [syncDailyLogs, user]);
 
   useEffect(() => {
     fetchCounts();
     fetchDailyLogs();
   }, [fetchCounts, fetchDailyLogs]);
 
-  const todayStr = format(new Date(), 'yyyy-MM-dd');
-  const todayLog = dailyLogs.find(l => l.log_date === todayStr);
-  const todayCount = todayLog?.total_count || 0;
-  const totalCount = counts.reduce((sum, c) => sum + c.count, 0);
+  useEffect(() => {
+    calculateStreak(dailyLogs);
+  }, [calculateStreak, dailyLogs]);
 
-  const logDailyJap = async () => {
+  const todayLog = dailyLogs.find((log) => log.log_date === todayStr);
+  const todayCount = todayLog?.total_count || 0;
+  const totalCount = counts.reduce((sum, count) => sum + count.count, 0);
+
+  const incrementTodayCountLocally = useCallback(() => {
+    const nextTotal = (dailyTotalsRef.current[todayStr] || 0) + 1;
+    dailyTotalsRef.current = {
+      ...dailyTotalsRef.current,
+      [todayStr]: nextTotal,
+    };
+
+    setDailyLogs((prev) => [
+      { log_date: todayStr, total_count: nextTotal },
+      ...prev.filter((log) => log.log_date !== todayStr),
+    ]);
+  }, [todayStr]);
+
+  const logDailyJap = useCallback(() => {
     if (!user) return;
-    const existing = dailyLogs.find(l => l.log_date === todayStr);
-    if (existing) {
-      await supabase
-        .from('jap_daily_logs')
-        .update({ total_count: existing.total_count + 1 })
-        .eq('user_id', user.id)
-        .eq('log_date', todayStr);
-    } else {
-      await supabase
-        .from('jap_daily_logs')
-        .insert({ user_id: user.id, log_date: todayStr, total_count: 1 });
-    }
-    fetchDailyLogs();
-  };
+
+    incrementTodayCountLocally();
+
+    dailyLogQueueRef.current = dailyLogQueueRef.current
+      .then(async () => {
+        const { data: existingRows, error: readError } = await supabase
+          .from('jap_daily_logs')
+          .select('id, total_count')
+          .eq('user_id', user.id)
+          .eq('log_date', todayStr)
+          .order('created_at', { ascending: true });
+
+        if (readError) throw readError;
+
+        if (!existingRows || existingRows.length === 0) {
+          const { error: insertError } = await supabase
+            .from('jap_daily_logs')
+            .insert({ user_id: user.id, log_date: todayStr, total_count: 1 });
+
+          if (insertError) throw insertError;
+          return;
+        }
+
+        const firstRow = existingRows[0];
+        const { error: updateError } = await supabase
+          .from('jap_daily_logs')
+          .update({ total_count: firstRow.total_count + 1 })
+          .eq('id', firstRow.id);
+
+        if (updateError) throw updateError;
+      })
+      .catch(() => {
+        fetchDailyLogs();
+        toast.error('Aaj ke jap count save nahi hua');
+      });
+  }, [fetchDailyLogs, incrementTodayCountLocally, todayStr, user]);
 
   const handleAdd = async () => {
     const name = newName.trim();
     if (!name || !user) return;
+
     if (name.length > 100) {
       toast.error('Naam 100 characters se chhota hona chahiye');
       return;
     }
-    const existing = counts.find((c) => c.deity_name.toLowerCase() === name.toLowerCase());
+
+    const existing = counts.find((count) => count.deity_name.toLowerCase() === name.toLowerCase());
     if (existing) {
       toast.info(`"${existing.deity_name}" pehle se hai!`);
       setNewName('');
       return;
     }
+
     const { data, error } = await supabase
       .from('naam_jap_counts')
       .insert({ user_id: user.id, deity_name: name, count: 0 })
       .select('id, deity_name, count, daily_target')
       .single();
+
     if (error) {
       toast.error('Add nahi ho paya: ' + error.message);
     } else if (data) {
@@ -126,56 +207,70 @@ const NaamJapCounter = () => {
     }
   };
 
-  const handleJap = async (item: JapCount) => {
-    // Use functional update to get latest count, avoiding stale closure issues
-    let newCount = 0;
-    setCounts((prev) => prev.map((c) => {
-      if (c.id === item.id) {
-        newCount = c.count + 1;
-        return { ...c, count: newCount };
-      }
-      return c;
-    }));
-    // Small delay to ensure state settled
-    await new Promise(r => setTimeout(r, 0));
-    if (newCount === 0) newCount = item.count + 1;
-    const { error } = await supabase
-      .from('naam_jap_counts')
-      .update({ count: newCount })
-      .eq('id', item.id);
-    if (error) {
-      fetchCounts();
-      toast.error('Count save nahi hua');
-    } else {
-      logDailyJap();
-    }
+  const handleJap = (item: JapCount) => {
+    if (!user) return;
+
+    setCounts((prev) => prev.map((count) => (
+      count.id === item.id ? { ...count, count: count.count + 1 } : count
+    )));
+
+    const existingQueue = countQueueRef.current[item.id] || Promise.resolve();
+    countQueueRef.current[item.id] = existingQueue
+      .then(async () => {
+        const { data, error: readError } = await supabase
+          .from('naam_jap_counts')
+          .select('count')
+          .eq('id', item.id)
+          .single();
+
+        if (readError) throw readError;
+
+        const { error: updateError } = await supabase
+          .from('naam_jap_counts')
+          .update({ count: data.count + 1 })
+          .eq('id', item.id);
+
+        if (updateError) throw updateError;
+      })
+      .catch(() => {
+        fetchCounts();
+        toast.error('Count save nahi hua');
+      });
+
+    logDailyJap();
   };
 
   const handleDelete = async (item: JapCount) => {
     if (!confirm(`"${item.deity_name}" ka counter delete karein?`)) return;
+
     const { error } = await supabase.from('naam_jap_counts').delete().eq('id', item.id);
     if (error) {
       toast.error('Delete nahi hua');
     } else {
-      setCounts((prev) => prev.filter((c) => c.id !== item.id));
+      setCounts((prev) => prev.filter((count) => count.id !== item.id));
       toast.success('Delete ho gaya');
     }
   };
 
   const handleSetTarget = async (item: JapCount) => {
-    const target = parseInt(targetInput);
+    const target = parseInt(targetInput, 10);
     if (isNaN(target) || target < 1) {
       toast.error('Sahi target daalo (1 ya usse zyada)');
       return;
     }
+
     const { error } = await supabase
       .from('naam_jap_counts')
       .update({ daily_target: target })
       .eq('id', item.id);
+
     if (!error) {
-      setCounts((prev) => prev.map((c) => (c.id === item.id ? { ...c, daily_target: target } : c)));
+      setCounts((prev) => prev.map((count) => (
+        count.id === item.id ? { ...count, daily_target: target } : count
+      )));
       toast.success(`Target ${target} set ho gaya! 🎯`);
     }
+
     setEditingTarget(null);
     setTargetInput('');
   };
@@ -183,7 +278,7 @@ const NaamJapCounter = () => {
   const calendarDays = Array.from({ length: 35 }, (_, i) => {
     const date = subDays(new Date(), 34 - i);
     const dateStr = format(date, 'yyyy-MM-dd');
-    const log = dailyLogs.find(l => l.log_date === dateStr);
+    const log = dailyLogs.find((dailyLogItem) => dailyLogItem.log_date === dateStr);
     return { date, dateStr, count: log?.total_count || 0 };
   });
 
@@ -221,7 +316,6 @@ const NaamJapCounter = () => {
         </p>
       </div>
 
-      {/* Stats: Total + Today + Streak */}
       <div className="grid grid-cols-3 gap-3 mb-6">
         <div className="glass rounded-2xl p-3 text-center">
           <p className="text-2xl font-display font-bold text-primary">{hideCounts ? '•••' : totalCount}</p>
@@ -240,7 +334,6 @@ const NaamJapCounter = () => {
         </div>
       </div>
 
-      {/* Hide/Show + Calendar Toggle */}
       <div className="flex gap-2 mb-6">
         <button
           onClick={() => setHideCounts(!hideCounts)}
@@ -258,7 +351,6 @@ const NaamJapCounter = () => {
         </button>
       </div>
 
-      {/* Calendar Heatmap */}
       <AnimatePresence>
         {showCalendar && (
           <motion.div
@@ -270,8 +362,8 @@ const NaamJapCounter = () => {
             <div className="glass rounded-2xl p-4">
               <p className="text-xs text-muted-foreground font-mono mb-3 text-center">Pichle 35 din ka jap record 📅</p>
               <div className="grid grid-cols-7 gap-1.5">
-                {['S', 'M', 'T', 'W', 'T', 'F', 'S'].map((d, i) => (
-                  <span key={i} className="text-[10px] text-muted-foreground font-mono text-center">{d}</span>
+                {['S', 'M', 'T', 'W', 'T', 'F', 'S'].map((day, i) => (
+                  <span key={i} className="text-[10px] text-muted-foreground font-mono text-center">{day}</span>
                 ))}
                 {calendarDays.map((day) => (
                   <div
@@ -287,8 +379,8 @@ const NaamJapCounter = () => {
               </div>
               <div className="flex items-center justify-center gap-2 mt-3">
                 <span className="text-[10px] text-muted-foreground font-mono">Kam</span>
-                {[0, 3, 10, 30, 60].map((c) => (
-                  <div key={c} className={`w-3 h-3 rounded-sm ${getIntensityClass(c)}`} />
+                {[0, 3, 10, 30, 60].map((count) => (
+                  <div key={count} className={`w-3 h-3 rounded-sm ${getIntensityClass(count)}`} />
                 ))}
                 <span className="text-[10px] text-muted-foreground font-mono">Zyada</span>
               </div>
@@ -297,7 +389,6 @@ const NaamJapCounter = () => {
         )}
       </AnimatePresence>
 
-      {/* Add new deity name */}
       <div className="flex gap-2 mb-6">
         <input
           type="text"
@@ -318,7 +409,6 @@ const NaamJapCounter = () => {
         </button>
       </div>
 
-      {/* Counter list */}
       {loading ? (
         <p className="text-center text-muted-foreground text-sm">Loading...</p>
       ) : counts.length === 0 ? (
@@ -381,7 +471,6 @@ const NaamJapCounter = () => {
                   </div>
                 </div>
 
-                {/* Target progress bar */}
                 <div className="mt-3 px-1">
                   <div className="flex justify-between text-[10px] font-mono text-muted-foreground mb-1">
                     <span>Target: {hideCounts ? '•••' : item.daily_target} 🎯</span>
@@ -397,7 +486,6 @@ const NaamJapCounter = () => {
                   </div>
                 </div>
 
-                {/* Edit target */}
                 <AnimatePresence>
                   {editingTarget === item.id && (
                     <motion.div
