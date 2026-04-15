@@ -3,8 +3,24 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 import { toast } from 'sonner';
-import { Plus, Sparkles, Trash2, Flame, CalendarDays, Eye, EyeOff, Target } from 'lucide-react';
+import { Plus, Sparkles, Flame, CalendarDays, Eye, EyeOff, Target, Save, Settings2, Trash2 } from 'lucide-react';
 import { format, subDays, differenceInCalendarDays } from 'date-fns';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from '@/components/ui/alert-dialog';
+import {
+  readPendingJapChanges,
+  registerNaamJapFlushHandler,
+  writePendingJapChanges,
+} from '@/lib/naam-jap-sync';
 
 interface JapCount {
   id: string;
@@ -35,6 +51,22 @@ function mergeDailyLogRows(rows: DailyLogRow[]): DailyLog[] {
     .sort((a, b) => b.log_date.localeCompare(a.log_date));
 }
 
+function hasPositiveValues(record: Record<string, number>) {
+  return Object.values(record).some((value) => value > 0);
+}
+
+function subtractSavedValues(current: Record<string, number>, saved: Record<string, number>) {
+  const next = { ...current };
+
+  Object.entries(saved).forEach(([key, value]) => {
+    const remaining = (next[key] || 0) - value;
+    if (remaining > 0) next[key] = remaining;
+    else delete next[key];
+  });
+
+  return next;
+}
+
 const NaamJapCounter = () => {
   const { user } = useAuth();
   const [counts, setCounts] = useState<JapCount[]>([]);
@@ -46,11 +78,16 @@ const NaamJapCounter = () => {
   const [hideCounts, setHideCounts] = useState(false);
   const [editingTarget, setEditingTarget] = useState<string | null>(null);
   const [targetInput, setTargetInput] = useState('');
+  const [isSaving, setIsSaving] = useState(false);
+  const [hasPendingChanges, setHasPendingChanges] = useState(false);
+  const [lastSavedAt, setLastSavedAt] = useState<Date | null>(null);
 
   const todayStr = format(new Date(), 'yyyy-MM-dd');
-  const dailyLogQueueRef = useRef(Promise.resolve());
-  const countQueueRef = useRef<Record<string, Promise<void>>>({});
+  const pendingCountDeltasRef = useRef<Record<string, number>>({});
+  const pendingDailyLogDeltasRef = useRef<Record<string, number>>({});
   const dailyTotalsRef = useRef<Record<string, number>>({});
+  const autoSaveTimeoutRef = useRef<number | null>(null);
+  const flushPromiseRef = useRef<Promise<void> | null>(null);
 
   const calculateStreak = useCallback((logs: DailyLog[]) => {
     if (logs.length === 0) {
@@ -77,13 +114,48 @@ const NaamJapCounter = () => {
   }, [todayStr]);
 
   const syncDailyLogs = useCallback((rows: DailyLogRow[]) => {
-    const mergedLogs = mergeDailyLogRows(rows);
+    const mergedMap = mergeDailyLogRows(rows).reduce<Record<string, number>>((acc, log) => {
+      acc[log.log_date] = log.total_count;
+      return acc;
+    }, {});
+
+    Object.entries(pendingDailyLogDeltasRef.current).forEach(([logDate, delta]) => {
+      if (delta > 0) {
+        mergedMap[logDate] = (mergedMap[logDate] || 0) + delta;
+      }
+    });
+
+    const mergedLogs = Object.entries(mergedMap)
+      .map(([log_date, total_count]) => ({ log_date, total_count }))
+      .sort((a, b) => b.log_date.localeCompare(a.log_date));
+
     dailyTotalsRef.current = mergedLogs.reduce<Record<string, number>>((acc, log) => {
       acc[log.log_date] = log.total_count;
       return acc;
     }, {});
+
     setDailyLogs(mergedLogs);
   }, []);
+
+  const clearAutoSaveTimeout = useCallback(() => {
+    if (autoSaveTimeoutRef.current !== null) {
+      window.clearTimeout(autoSaveTimeoutRef.current);
+      autoSaveTimeoutRef.current = null;
+    }
+  }, []);
+
+  const persistPendingChanges = useCallback(() => {
+    if (!user) return;
+
+    writePendingJapChanges(user.id, {
+      countDeltas: pendingCountDeltasRef.current,
+      dailyLogDeltas: pendingDailyLogDeltasRef.current,
+    });
+
+    setHasPendingChanges(
+      hasPositiveValues(pendingCountDeltasRef.current) || hasPositiveValues(pendingDailyLogDeltasRef.current),
+    );
+  }, [user]);
 
   const fetchCounts = useCallback(async () => {
     if (!user) return;
@@ -94,7 +166,17 @@ const NaamJapCounter = () => {
       .eq('user_id', user.id)
       .order('count', { ascending: false });
 
-    if (!error && data) setCounts(data);
+    if (!error && data) {
+      const nextCounts = data
+        .map((item) => ({
+          ...item,
+          count: item.count + (pendingCountDeltasRef.current[item.id] || 0),
+        }))
+        .sort((a, b) => b.count - a.count);
+
+      setCounts(nextCounts);
+    }
+
     setLoading(false);
   }, [user]);
 
@@ -111,70 +193,201 @@ const NaamJapCounter = () => {
     if (data) syncDailyLogs(data);
   }, [syncDailyLogs, user]);
 
-  useEffect(() => {
-    fetchCounts();
-    fetchDailyLogs();
-  }, [fetchCounts, fetchDailyLogs]);
+  const incrementDailyLogLocally = useCallback((logDate: string, increment = 1) => {
+    const nextTotal = (dailyTotalsRef.current[logDate] || 0) + increment;
+    dailyTotalsRef.current = {
+      ...dailyTotalsRef.current,
+      [logDate]: nextTotal,
+    };
+
+    setDailyLogs((prev) => [
+      { log_date: logDate, total_count: nextTotal },
+      ...prev.filter((log) => log.log_date !== logDate),
+    ]);
+  }, []);
+
+  const flushPendingChanges = useCallback(async ({ showSuccessToast = true }: { showSuccessToast?: boolean } = {}) => {
+    if (!user) return;
+
+    if (flushPromiseRef.current) {
+      await flushPromiseRef.current;
+      return;
+    }
+
+    const countSnapshot = Object.fromEntries(
+      Object.entries(pendingCountDeltasRef.current).filter(([, delta]) => delta > 0),
+    );
+    const dailySnapshot = Object.fromEntries(
+      Object.entries(pendingDailyLogDeltasRef.current).filter(([, delta]) => delta > 0),
+    );
+
+    if (!hasPositiveValues(countSnapshot) && !hasPositiveValues(dailySnapshot)) {
+      if (showSuccessToast) toast.success('Sab save hai');
+      return;
+    }
+
+    clearAutoSaveTimeout();
+
+    const saveTask = (async () => {
+      setIsSaving(true);
+
+      try {
+        await Promise.all([
+          (async () => {
+            if (!hasPositiveValues(countSnapshot)) return;
+
+            const ids = Object.keys(countSnapshot);
+            const { data, error } = await supabase
+              .from('naam_jap_counts')
+              .select('id, count')
+              .eq('user_id', user.id)
+              .in('id', ids);
+
+            if (error) throw error;
+
+            const serverCounts = new Map((data ?? []).map((row) => [row.id, row.count]));
+
+            for (const [id, delta] of Object.entries(countSnapshot)) {
+              const baseCount = serverCounts.get(id);
+              if (baseCount === undefined) continue;
+
+              const { error: updateError } = await supabase
+                .from('naam_jap_counts')
+                .update({ count: baseCount + delta })
+                .eq('id', id)
+                .eq('user_id', user.id);
+
+              if (updateError) throw updateError;
+            }
+          })(),
+          (async () => {
+            if (!hasPositiveValues(dailySnapshot)) return;
+
+            const dates = Object.keys(dailySnapshot);
+            const { data, error } = await supabase
+              .from('jap_daily_logs')
+              .select('id, log_date, total_count')
+              .eq('user_id', user.id)
+              .in('log_date', dates)
+              .order('created_at', { ascending: true });
+
+            if (error) throw error;
+
+            const grouped = (data ?? []).reduce<Record<string, DailyLogRow[]>>((acc, row) => {
+              acc[row.log_date] = [...(acc[row.log_date] ?? []), row];
+              return acc;
+            }, {});
+
+            for (const [logDate, delta] of Object.entries(dailySnapshot)) {
+              const existingRows = grouped[logDate] ?? [];
+
+              if (existingRows.length === 0) {
+                const { error: insertError } = await supabase
+                  .from('jap_daily_logs')
+                  .insert({ user_id: user.id, log_date: logDate, total_count: delta });
+
+                if (insertError) throw insertError;
+                continue;
+              }
+
+              const firstRow = existingRows[0];
+              const { error: updateError } = await supabase
+                .from('jap_daily_logs')
+                .update({ total_count: firstRow.total_count + delta })
+                .eq('id', firstRow.id)
+                .eq('user_id', user.id);
+
+              if (updateError) throw updateError;
+            }
+          })(),
+        ]);
+
+        pendingCountDeltasRef.current = subtractSavedValues(pendingCountDeltasRef.current, countSnapshot);
+        pendingDailyLogDeltasRef.current = subtractSavedValues(pendingDailyLogDeltasRef.current, dailySnapshot);
+        persistPendingChanges();
+        setLastSavedAt(new Date());
+
+        if (showSuccessToast) toast.success('Jap save ho gaya');
+
+        if (hasPositiveValues(pendingCountDeltasRef.current) || hasPositiveValues(pendingDailyLogDeltasRef.current)) {
+          autoSaveTimeoutRef.current = window.setTimeout(() => {
+            void flushPendingChanges({ showSuccessToast: false });
+          }, 400);
+        }
+      } catch (_error) {
+        persistPendingChanges();
+        await Promise.all([fetchCounts(), fetchDailyLogs()]);
+
+        if (showSuccessToast) toast.error('Save nahi ho paya, phir se try karo');
+      } finally {
+        setIsSaving(false);
+        flushPromiseRef.current = null;
+      }
+    })();
+
+    flushPromiseRef.current = saveTask;
+    await saveTask;
+  }, [clearAutoSaveTimeout, fetchCounts, fetchDailyLogs, persistPendingChanges, user]);
+
+  const scheduleAutoSave = useCallback(() => {
+    clearAutoSaveTimeout();
+    autoSaveTimeoutRef.current = window.setTimeout(() => {
+      void flushPendingChanges({ showSuccessToast: false });
+    }, 1200);
+  }, [clearAutoSaveTimeout, flushPendingChanges]);
 
   useEffect(() => {
     calculateStreak(dailyLogs);
   }, [calculateStreak, dailyLogs]);
 
+  useEffect(() => {
+    if (!user) {
+      setCounts([]);
+      setDailyLogs([]);
+      setLoading(false);
+      setHasPendingChanges(false);
+      setLastSavedAt(null);
+      pendingCountDeltasRef.current = {};
+      pendingDailyLogDeltasRef.current = {};
+      dailyTotalsRef.current = {};
+      clearAutoSaveTimeout();
+      registerNaamJapFlushHandler(null);
+      return;
+    }
+
+    const pendingChanges = readPendingJapChanges(user.id);
+    pendingCountDeltasRef.current = pendingChanges.countDeltas;
+    pendingDailyLogDeltasRef.current = pendingChanges.dailyLogDeltas;
+    setHasPendingChanges(
+      hasPositiveValues(pendingChanges.countDeltas) || hasPositiveValues(pendingChanges.dailyLogDeltas),
+    );
+    setLoading(true);
+
+    void Promise.all([fetchCounts(), fetchDailyLogs()]);
+    registerNaamJapFlushHandler(() => flushPendingChanges({ showSuccessToast: false }));
+
+    if (hasPositiveValues(pendingChanges.countDeltas) || hasPositiveValues(pendingChanges.dailyLogDeltas)) {
+      autoSaveTimeoutRef.current = window.setTimeout(() => {
+        void flushPendingChanges({ showSuccessToast: false });
+      }, 800);
+    }
+
+    return () => {
+      clearAutoSaveTimeout();
+      registerNaamJapFlushHandler(null);
+    };
+  }, [clearAutoSaveTimeout, fetchCounts, fetchDailyLogs, flushPendingChanges, user]);
+
   const todayLog = dailyLogs.find((log) => log.log_date === todayStr);
   const todayCount = todayLog?.total_count || 0;
   const totalCount = counts.reduce((sum, count) => sum + count.count, 0);
-
-  const incrementTodayCountLocally = useCallback(() => {
-    const nextTotal = (dailyTotalsRef.current[todayStr] || 0) + 1;
-    dailyTotalsRef.current = {
-      ...dailyTotalsRef.current,
-      [todayStr]: nextTotal,
-    };
-
-    setDailyLogs((prev) => [
-      { log_date: todayStr, total_count: nextTotal },
-      ...prev.filter((log) => log.log_date !== todayStr),
-    ]);
-  }, [todayStr]);
-
-  const logDailyJap = useCallback(() => {
-    if (!user) return;
-
-    incrementTodayCountLocally();
-
-    dailyLogQueueRef.current = dailyLogQueueRef.current
-      .then(async () => {
-        const { data: existingRows, error: readError } = await supabase
-          .from('jap_daily_logs')
-          .select('id, total_count')
-          .eq('user_id', user.id)
-          .eq('log_date', todayStr)
-          .order('created_at', { ascending: true });
-
-        if (readError) throw readError;
-
-        if (!existingRows || existingRows.length === 0) {
-          const { error: insertError } = await supabase
-            .from('jap_daily_logs')
-            .insert({ user_id: user.id, log_date: todayStr, total_count: 1 });
-
-          if (insertError) throw insertError;
-          return;
-        }
-
-        const firstRow = existingRows[0];
-        const { error: updateError } = await supabase
-          .from('jap_daily_logs')
-          .update({ total_count: firstRow.total_count + 1 })
-          .eq('id', firstRow.id);
-
-        if (updateError) throw updateError;
-      })
-      .catch(() => {
-        fetchDailyLogs();
-        toast.error('Aaj ke jap count save nahi hua');
-      });
-  }, [fetchDailyLogs, incrementTodayCountLocally, todayStr, user]);
+  const saveStatusText = isSaving
+    ? 'Save ho raha hai...'
+    : hasPendingChanges
+      ? 'Abhi changes pending hain — Save dabao.'
+      : lastSavedAt
+        ? `Last save ${format(lastSavedAt, 'hh:mm a')}`
+        : 'Auto-save on hai';
 
   const handleAdd = async () => {
     const name = newName.trim();
@@ -214,42 +427,41 @@ const NaamJapCounter = () => {
       count.id === item.id ? { ...count, count: count.count + 1 } : count
     )));
 
-    const existingQueue = countQueueRef.current[item.id] || Promise.resolve();
-    countQueueRef.current[item.id] = existingQueue
-      .then(async () => {
-        const { data, error: readError } = await supabase
-          .from('naam_jap_counts')
-          .select('count')
-          .eq('id', item.id)
-          .single();
+    pendingCountDeltasRef.current = {
+      ...pendingCountDeltasRef.current,
+      [item.id]: (pendingCountDeltasRef.current[item.id] || 0) + 1,
+    };
+    pendingDailyLogDeltasRef.current = {
+      ...pendingDailyLogDeltasRef.current,
+      [todayStr]: (pendingDailyLogDeltasRef.current[todayStr] || 0) + 1,
+    };
 
-        if (readError) throw readError;
-
-        const { error: updateError } = await supabase
-          .from('naam_jap_counts')
-          .update({ count: data.count + 1 })
-          .eq('id', item.id);
-
-        if (updateError) throw updateError;
-      })
-      .catch(() => {
-        fetchCounts();
-        toast.error('Count save nahi hua');
-      });
-
-    logDailyJap();
+    persistPendingChanges();
+    incrementDailyLogLocally(todayStr);
+    scheduleAutoSave();
   };
 
   const handleDelete = async (item: JapCount) => {
-    if (!confirm(`"${item.deity_name}" ka counter delete karein?`)) return;
+    if (!user) return;
 
-    const { error } = await supabase.from('naam_jap_counts').delete().eq('id', item.id);
+    const { error } = await supabase
+      .from('naam_jap_counts')
+      .delete()
+      .eq('id', item.id)
+      .eq('user_id', user.id);
+
     if (error) {
       toast.error('Delete nahi hua');
-    } else {
-      setCounts((prev) => prev.filter((count) => count.id !== item.id));
-      toast.success('Delete ho gaya');
+      return;
     }
+
+    setCounts((prev) => prev.filter((count) => count.id !== item.id));
+    const nextPendingCounts = { ...pendingCountDeltasRef.current };
+    delete nextPendingCounts[item.id];
+    pendingCountDeltasRef.current = nextPendingCounts;
+    persistPendingChanges();
+    setEditingTarget((current) => (current === item.id ? null : current));
+    toast.success('Delete ho gaya');
   };
 
   const handleSetTarget = async (item: JapCount) => {
@@ -334,22 +546,36 @@ const NaamJapCounter = () => {
         </div>
       </div>
 
-      <div className="flex gap-2 mb-6">
+      <div className="grid grid-cols-3 gap-2 mb-2">
         <button
           onClick={() => setHideCounts(!hideCounts)}
-          className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl glass text-sm font-mono text-muted-foreground hover:text-foreground transition-colors"
+          className="flex items-center justify-center gap-2 px-3 py-2.5 rounded-xl glass text-sm font-mono text-muted-foreground hover:text-foreground transition-colors"
         >
           {hideCounts ? <Eye className="w-4 h-4" /> : <EyeOff className="w-4 h-4" />}
-          {hideCounts ? 'Show Counts' : 'Hide Counts'}
+          <span className="hidden sm:inline">{hideCounts ? 'Show' : 'Hide'}</span>
         </button>
         <button
           onClick={() => setShowCalendar(!showCalendar)}
-          className="flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl glass text-sm font-mono text-muted-foreground hover:text-foreground transition-colors"
+          className="flex items-center justify-center gap-2 px-3 py-2.5 rounded-xl glass text-sm font-mono text-muted-foreground hover:text-foreground transition-colors"
         >
           <CalendarDays className="w-4 h-4" />
-          Calendar
+          <span className="hidden sm:inline">Calendar</span>
+        </button>
+        <button
+          onClick={() => void flushPendingChanges()}
+          disabled={isSaving}
+          className={`flex items-center justify-center gap-2 px-3 py-2.5 rounded-xl text-sm font-mono transition-colors disabled:opacity-60 ${
+            hasPendingChanges
+              ? 'bg-primary/10 text-primary hover:bg-primary/20'
+              : 'glass text-muted-foreground hover:text-foreground'
+          }`}
+        >
+          <Save className="w-4 h-4" />
+          <span className="hidden sm:inline">{isSaving ? 'Saving' : hasPendingChanges ? 'Save' : 'Saved'}</span>
         </button>
       </div>
+
+      <p className="text-[11px] text-center text-muted-foreground font-mono mb-6">{saveStatusText}</p>
 
       <AnimatePresence>
         {showCalendar && (
@@ -368,10 +594,10 @@ const NaamJapCounter = () => {
                 {calendarDays.map((day) => (
                   <div
                     key={day.dateStr}
-                    title={`${format(day.date, 'dd MMM')}: ${day.count} jap`}
-                    className={`aspect-square rounded-md ${getIntensityClass(day.count)} transition-colors cursor-default flex items-center justify-center`}
+                    title={hideCounts ? format(day.date, 'dd MMM') : `${format(day.date, 'dd MMM')}: ${day.count} jap`}
+                    className={`aspect-square rounded-md ${getIntensityClass(hideCounts ? 0 : day.count)} transition-colors cursor-default flex items-center justify-center`}
                   >
-                    {day.count > 0 && (
+                    {!hideCounts && day.count > 0 && (
                       <span className="text-[8px] font-mono text-primary-foreground font-bold">{day.count}</span>
                     )}
                   </div>
@@ -380,7 +606,7 @@ const NaamJapCounter = () => {
               <div className="flex items-center justify-center gap-2 mt-3">
                 <span className="text-[10px] text-muted-foreground font-mono">Kam</span>
                 {[0, 3, 10, 30, 60].map((count) => (
-                  <div key={count} className={`w-3 h-3 rounded-sm ${getIntensityClass(count)}`} />
+                  <div key={count} className={`w-3 h-3 rounded-sm ${getIntensityClass(hideCounts ? 0 : count)}`} />
                 ))}
                 <span className="text-[10px] text-muted-foreground font-mono">Zyada</span>
               </div>
@@ -450,24 +676,16 @@ const NaamJapCounter = () => {
                       {hideCounts ? '•••' : item.count}
                     </motion.span>
 
-                    <div className="flex flex-col gap-1">
-                      <button
-                        onClick={() => {
-                          setEditingTarget(editingTarget === item.id ? null : item.id);
-                          setTargetInput(String(item.daily_target));
-                        }}
-                        className="p-1.5 rounded-lg text-muted-foreground hover:text-primary hover:bg-primary/10 transition-colors"
-                        title="Set target"
-                      >
-                        <Target className="w-4 h-4" />
-                      </button>
-                      <button
-                        onClick={() => handleDelete(item)}
-                        className="p-1.5 rounded-lg text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors"
-                      >
-                        <Trash2 className="w-4 h-4" />
-                      </button>
-                    </div>
+                    <button
+                      onClick={() => {
+                        setEditingTarget(editingTarget === item.id ? null : item.id);
+                        setTargetInput(String(item.daily_target));
+                      }}
+                      className="p-2 rounded-lg text-muted-foreground hover:text-primary hover:bg-primary/10 transition-colors"
+                      title="Manage counter"
+                    >
+                      <Settings2 className="w-4 h-4" />
+                    </button>
                   </div>
                 </div>
 
@@ -480,7 +698,7 @@ const NaamJapCounter = () => {
                     <motion.div
                       className="h-full rounded-full bg-primary"
                       initial={{ width: 0 }}
-                      animate={{ width: `${Math.min(100, (item.count / item.daily_target) * 100)}%` }}
+                      animate={{ width: hideCounts ? '0%' : `${Math.min(100, (item.count / item.daily_target) * 100)}%` }}
                       transition={{ duration: 0.5 }}
                     />
                   </div>
@@ -494,22 +712,55 @@ const NaamJapCounter = () => {
                       exit={{ opacity: 0, height: 0 }}
                       className="overflow-hidden mt-3"
                     >
-                      <div className="flex gap-2">
-                        <input
-                          type="number"
-                          value={targetInput}
-                          onChange={(e) => setTargetInput(e.target.value)}
-                          onKeyDown={(e) => e.key === 'Enter' && handleSetTarget(item)}
-                          placeholder="Target set karo..."
-                          min={1}
-                          className="flex-1 px-3 py-2 rounded-lg bg-secondary border border-border text-foreground text-sm focus:outline-none focus:border-primary/50"
-                        />
-                        <button
-                          onClick={() => handleSetTarget(item)}
-                          className="px-3 py-2 rounded-lg bg-primary text-primary-foreground text-sm font-semibold"
-                        >
-                          Set 🎯
-                        </button>
+                      <div className="glass rounded-xl p-3 space-y-3">
+                        <div className="flex gap-2">
+                          <input
+                            type="number"
+                            value={targetInput}
+                            onChange={(e) => setTargetInput(e.target.value)}
+                            onKeyDown={(e) => e.key === 'Enter' && handleSetTarget(item)}
+                            placeholder="Target set karo..."
+                            min={1}
+                            className="flex-1 px-3 py-2 rounded-lg bg-secondary border border-border text-foreground text-sm focus:outline-none focus:border-primary/50"
+                          />
+                          <button
+                            onClick={() => handleSetTarget(item)}
+                            className="px-3 py-2 rounded-lg bg-primary text-primary-foreground text-sm font-semibold"
+                          >
+                            Set 🎯
+                          </button>
+                        </div>
+
+                        <div className="flex justify-end">
+                          <AlertDialog>
+                            <AlertDialogTrigger asChild>
+                              <button
+                                className="inline-flex items-center gap-2 px-3 py-2 rounded-lg bg-destructive/10 text-destructive text-sm font-semibold hover:bg-destructive/20 transition-colors disabled:opacity-60"
+                                disabled={isSaving}
+                              >
+                                <Trash2 className="w-4 h-4" />
+                                Delete Counter
+                              </button>
+                            </AlertDialogTrigger>
+                            <AlertDialogContent className="glass border-border">
+                              <AlertDialogHeader>
+                                <AlertDialogTitle>{item.deity_name} delete karna hai?</AlertDialogTitle>
+                                <AlertDialogDescription>
+                                  Yeh button ab side mein rakha hai taki galti se delete na ho. Delete ke baad yeh counter list se hat jayega.
+                                </AlertDialogDescription>
+                              </AlertDialogHeader>
+                              <AlertDialogFooter>
+                                <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                <AlertDialogAction
+                                  onClick={() => void handleDelete(item)}
+                                  className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                                >
+                                  Delete
+                                </AlertDialogAction>
+                              </AlertDialogFooter>
+                            </AlertDialogContent>
+                          </AlertDialog>
+                        </div>
                       </div>
                     </motion.div>
                   )}

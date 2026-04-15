@@ -4,7 +4,7 @@ import App from "./App.tsx";
 import "./index.css";
 
 createRoot(document.getElementById("root")!).render(
-  <ThemeProvider attribute="class" defaultTheme="dark" enableSystem={false} themes={["light", "dark"]}>
+  <ThemeProvider attribute="class" defaultTheme="dark" enableSystem={false} themes={["light", "dark", "sunrise", "ocean"]}>
     <App />
   </ThemeProvider>
 );
