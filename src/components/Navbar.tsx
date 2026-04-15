@@ -1,21 +1,41 @@
+import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { BookOpen, PenLine, LogIn, LogOut, User, Sun, Moon } from 'lucide-react';
+import { BookOpen, PenLine, LogIn, LogOut, User, Palette } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import { useTheme } from 'next-themes';
+import { flushNaamJapBeforeLogout } from '@/lib/naam-jap-sync';
+
+const themeOptions = [
+  { value: 'light', label: 'Rose' },
+  { value: 'sunrise', label: 'Yellow' },
+  { value: 'ocean', label: 'Blue' },
+  { value: 'dark', label: 'Dark' },
+] as const;
 
 const Navbar = () => {
   const navigate = useNavigate();
   const { user, signOut } = useAuth();
   const { theme, setTheme } = useTheme();
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
 
   const handleSignOut = async () => {
-    await signOut();
-    navigate('/');
+    setIsLoggingOut(true);
+    try {
+      await flushNaamJapBeforeLogout();
+      await signOut();
+      navigate('/');
+    } finally {
+      setIsLoggingOut(false);
+    }
   };
 
-  const toggleTheme = () => {
-    setTheme(theme === 'dark' ? 'light' : 'dark');
+  const currentThemeIndex = Math.max(themeOptions.findIndex((option) => option.value === theme), 0);
+  const currentThemeLabel = themeOptions[currentThemeIndex]?.label ?? 'Theme';
+
+  const cycleTheme = () => {
+    const nextTheme = themeOptions[(currentThemeIndex + 1) % themeOptions.length];
+    setTheme(nextTheme.value);
   };
 
   return (
@@ -39,12 +59,28 @@ const Navbar = () => {
         </button>
 
         <div className="flex items-center gap-2 md:gap-3">
+          <div className="hidden lg:flex items-center gap-1 rounded-full glass p-1">
+            {themeOptions.map((option) => (
+              <button
+                key={option.value}
+                onClick={() => setTheme(option.value)}
+                className={`px-2.5 py-1.5 rounded-full text-xs font-mono transition-colors ${
+                  theme === option.value
+                    ? 'bg-primary text-primary-foreground'
+                    : 'text-muted-foreground hover:text-primary'
+                }`}
+              >
+                {option.label}
+              </button>
+            ))}
+          </div>
           <button
-            onClick={toggleTheme}
-            className="flex items-center gap-1.5 text-sm px-2.5 py-1.5 rounded-full glass text-muted-foreground hover:text-primary transition-colors"
-            aria-label="Toggle theme"
+            onClick={cycleTheme}
+            className="flex lg:hidden items-center gap-1.5 text-sm px-2.5 py-1.5 rounded-full glass text-muted-foreground hover:text-primary transition-colors"
+            aria-label="Change theme"
           >
-            {theme === 'dark' ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
+            <Palette className="w-4 h-4" />
+            <span className="hidden sm:inline">{currentThemeLabel}</span>
           </button>
           <button
             onClick={() => navigate('/about')}
@@ -75,10 +111,11 @@ const Navbar = () => {
           {user ? (
             <button
               onClick={handleSignOut}
-              className="flex items-center gap-1.5 text-sm px-3 py-1.5 rounded-full glass text-muted-foreground hover:text-primary transition-colors font-mono"
+              disabled={isLoggingOut}
+              className="flex items-center gap-1.5 text-sm px-3 py-1.5 rounded-full glass text-muted-foreground hover:text-primary transition-colors font-mono disabled:opacity-60"
             >
               <LogOut className="w-3.5 h-3.5" />
-              <span className="hidden sm:inline">Logout</span>
+              <span className="hidden sm:inline">{isLoggingOut ? 'Saving...' : 'Logout'}</span>
             </button>
           ) : (
             <button
