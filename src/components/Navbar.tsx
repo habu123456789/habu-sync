@@ -10,6 +10,10 @@ const themeOptions = [
   { value: 'light', label: 'Rose' },
   { value: 'sunrise', label: 'Yellow' },
   { value: 'ocean', label: 'Blue' },
+  { value: 'bhagwa', label: 'Bhagwa' },
+  { value: 'krishna', label: 'Krishna' },
+  { value: 'forest', label: 'Forest' },
+  { value: 'lotus', label: 'Lotus' },
   { value: 'dark', label: 'Dark' },
 ] as const;
 
@@ -59,12 +63,12 @@ const Navbar = () => {
         </button>
 
         <div className="flex items-center gap-2 md:gap-3">
-          <div className="hidden lg:flex items-center gap-1 rounded-full glass p-1">
+          <div className="hidden lg:flex items-center gap-1 rounded-full glass p-1 max-w-md overflow-x-auto scrollbar-hide">
             {themeOptions.map((option) => (
               <button
                 key={option.value}
                 onClick={() => setTheme(option.value)}
-                className={`px-2.5 py-1.5 rounded-full text-xs font-mono transition-colors ${
+                className={`px-2 py-1.5 rounded-full text-[11px] font-mono transition-colors whitespace-nowrap ${
                   theme === option.value
                     ? 'bg-primary text-primary-foreground'
                     : 'text-muted-foreground hover:text-primary'

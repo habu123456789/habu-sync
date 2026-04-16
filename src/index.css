@@ -196,32 +196,23 @@
   .ocean {
     --background: 204 100% 96%;
     --foreground: 215 54% 15%;
-
     --card: 0 0% 100%;
     --card-foreground: 215 54% 15%;
-
     --popover: 204 100% 97%;
     --popover-foreground: 215 54% 15%;
-
     --primary: 207 88% 48%;
     --primary-foreground: 0 0% 100%;
-
     --secondary: 48 95% 88%;
     --secondary-foreground: 215 54% 18%;
-
     --muted: 205 50% 86%;
     --muted-foreground: 215 28% 36%;
-
     --accent: 45 96% 54%;
     --accent-foreground: 215 54% 16%;
-
     --destructive: 0 72% 50%;
     --destructive-foreground: 0 85% 97%;
-
     --border: 205 48% 84%;
     --input: 205 48% 84%;
     --ring: 207 88% 48%;
-
     --sidebar-background: 204 100% 98%;
     --sidebar-foreground: 215 54% 15%;
     --sidebar-primary: 207 88% 48%;
@@ -230,7 +221,6 @@
     --sidebar-accent-foreground: 215 54% 18%;
     --sidebar-border: 205 48% 84%;
     --sidebar-ring: 207 88% 48%;
-
     --glass-bg: 205 100% 96%;
     --glass-border: 205 50% 83%;
     --glow-primary: 207 88% 54%;
@@ -250,6 +240,202 @@
     --shadow-lg: 0 10px 15px -3px hsl(207 88% 38% / 0.1), 0 4px 6px -4px hsl(45 96% 42% / 0.08);
     --shadow-xl: 0 20px 25px -5px hsl(207 88% 38% / 0.12), 0 8px 10px -6px hsl(45 96% 42% / 0.1);
     --shadow-2xl: 0 25px 50px -12px hsl(207 88% 38% / 0.2);
+  }
+
+  .bhagwa {
+    --background: 24 80% 96%;
+    --foreground: 24 40% 14%;
+    --card: 24 70% 98%;
+    --card-foreground: 24 40% 14%;
+    --popover: 24 70% 97%;
+    --popover-foreground: 24 40% 14%;
+    --primary: 24 90% 50%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 24 50% 88%;
+    --secondary-foreground: 24 40% 16%;
+    --muted: 24 30% 82%;
+    --muted-foreground: 24 20% 38%;
+    --accent: 45 90% 55%;
+    --accent-foreground: 24 50% 18%;
+    --destructive: 0 72% 50%;
+    --destructive-foreground: 0 85% 97%;
+    --border: 24 40% 85%;
+    --input: 24 40% 85%;
+    --ring: 24 90% 50%;
+    --sidebar-background: 24 80% 97%;
+    --sidebar-foreground: 24 40% 14%;
+    --sidebar-primary: 24 90% 50%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 24 50% 88%;
+    --sidebar-accent-foreground: 24 40% 16%;
+    --sidebar-border: 24 40% 85%;
+    --sidebar-ring: 24 90% 50%;
+    --glass-bg: 24 70% 95%;
+    --glass-border: 24 40% 82%;
+    --glow-primary: 24 90% 55%;
+    --glow-accent: 45 90% 55%;
+    --surface-elevated: 24 70% 97%;
+    --chart-1: 24 90% 55%;
+    --chart-2: 45 90% 55%;
+    --chart-3: 15 80% 50%;
+    --chart-4: 35 85% 55%;
+    --chart-5: 24 50% 30%;
+    --sidebar: 24 80% 97%;
+    --shadow-2xs: 0 1px 3px 0px hsl(24 90% 40% / 0.06);
+    --shadow-xs: 0 1px 3px 0px hsl(24 90% 40% / 0.06);
+    --shadow-sm: 0 1px 3px 0px hsl(24 90% 40% / 0.1), 0 1px 2px -1px hsl(24 90% 40% / 0.08);
+    --shadow: 0 1px 3px 0px hsl(24 90% 40% / 0.12), 0 1px 2px -1px hsl(24 90% 40% / 0.1);
+    --shadow-md: 0 4px 6px -1px hsl(24 90% 40% / 0.1), 0 2px 4px -2px hsl(24 90% 40% / 0.08);
+    --shadow-lg: 0 10px 15px -3px hsl(24 90% 40% / 0.1), 0 4px 6px -4px hsl(24 90% 40% / 0.08);
+    --shadow-xl: 0 20px 25px -5px hsl(24 90% 40% / 0.12), 0 8px 10px -6px hsl(24 90% 40% / 0.1);
+    --shadow-2xl: 0 25px 50px -12px hsl(24 90% 40% / 0.2);
+  }
+
+  .krishna {
+    --background: 270 30% 96%;
+    --foreground: 270 25% 14%;
+    --card: 270 35% 98%;
+    --card-foreground: 270 25% 14%;
+    --popover: 270 30% 97%;
+    --popover-foreground: 270 25% 14%;
+    --primary: 270 65% 50%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 270 30% 88%;
+    --secondary-foreground: 270 25% 16%;
+    --muted: 270 20% 82%;
+    --muted-foreground: 270 15% 38%;
+    --accent: 45 90% 55%;
+    --accent-foreground: 270 40% 18%;
+    --destructive: 0 72% 50%;
+    --destructive-foreground: 0 85% 97%;
+    --border: 270 20% 86%;
+    --input: 270 20% 86%;
+    --ring: 270 65% 50%;
+    --sidebar-background: 270 30% 97%;
+    --sidebar-foreground: 270 25% 14%;
+    --sidebar-primary: 270 65% 50%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 270 30% 88%;
+    --sidebar-accent-foreground: 270 25% 16%;
+    --sidebar-border: 270 20% 86%;
+    --sidebar-ring: 270 65% 50%;
+    --glass-bg: 270 30% 95%;
+    --glass-border: 270 20% 83%;
+    --glow-primary: 270 70% 55%;
+    --glow-accent: 300 50% 60%;
+    --surface-elevated: 270 30% 97%;
+    --chart-1: 270 65% 55%;
+    --chart-2: 300 50% 60%;
+    --chart-3: 250 55% 50%;
+    --chart-4: 280 45% 55%;
+    --chart-5: 270 40% 30%;
+    --sidebar: 270 35% 98%;
+    --shadow-2xs: 0 1px 3px 0px hsl(270 65% 40% / 0.06);
+    --shadow-xs: 0 1px 3px 0px hsl(270 65% 40% / 0.06);
+    --shadow-sm: 0 1px 3px 0px hsl(270 65% 40% / 0.1), 0 1px 2px -1px hsl(270 65% 40% / 0.08);
+    --shadow: 0 1px 3px 0px hsl(270 65% 40% / 0.12), 0 1px 2px -1px hsl(270 65% 40% / 0.1);
+    --shadow-md: 0 4px 6px -1px hsl(270 65% 40% / 0.1), 0 2px 4px -2px hsl(270 65% 40% / 0.08);
+    --shadow-lg: 0 10px 15px -3px hsl(270 65% 40% / 0.1), 0 4px 6px -4px hsl(270 65% 40% / 0.08);
+    --shadow-xl: 0 20px 25px -5px hsl(270 65% 40% / 0.12), 0 8px 10px -6px hsl(270 65% 40% / 0.1);
+    --shadow-2xl: 0 25px 50px -12px hsl(270 65% 40% / 0.2);
+  }
+
+  .forest {
+    --background: 140 30% 96%;
+    --foreground: 140 25% 14%;
+    --card: 140 35% 98%;
+    --card-foreground: 140 25% 14%;
+    --popover: 140 30% 97%;
+    --popover-foreground: 140 25% 14%;
+    --primary: 140 55% 38%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 140 30% 88%;
+    --secondary-foreground: 140 25% 16%;
+    --muted: 140 20% 82%;
+    --muted-foreground: 140 15% 38%;
+    --accent: 45 80% 50%;
+    --accent-foreground: 140 40% 18%;
+    --destructive: 0 72% 50%;
+    --destructive-foreground: 0 85% 97%;
+    --border: 140 20% 85%;
+    --input: 140 20% 85%;
+    --ring: 140 55% 38%;
+    --sidebar-background: 140 30% 97%;
+    --sidebar-foreground: 140 25% 14%;
+    --sidebar-primary: 140 55% 38%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 140 30% 88%;
+    --sidebar-accent-foreground: 140 25% 16%;
+    --sidebar-border: 140 20% 85%;
+    --sidebar-ring: 140 55% 38%;
+    --glass-bg: 140 30% 95%;
+    --glass-border: 140 20% 83%;
+    --glow-primary: 140 55% 42%;
+    --glow-accent: 80 50% 50%;
+    --surface-elevated: 140 30% 97%;
+    --chart-1: 140 55% 42%;
+    --chart-2: 80 50% 50%;
+    --chart-3: 160 50% 40%;
+    --chart-4: 120 40% 45%;
+    --chart-5: 140 30% 28%;
+    --sidebar: 140 35% 98%;
+    --shadow-2xs: 0 1px 3px 0px hsl(140 55% 30% / 0.06);
+    --shadow-xs: 0 1px 3px 0px hsl(140 55% 30% / 0.06);
+    --shadow-sm: 0 1px 3px 0px hsl(140 55% 30% / 0.1), 0 1px 2px -1px hsl(140 55% 30% / 0.08);
+    --shadow: 0 1px 3px 0px hsl(140 55% 30% / 0.12), 0 1px 2px -1px hsl(140 55% 30% / 0.1);
+    --shadow-md: 0 4px 6px -1px hsl(140 55% 30% / 0.1), 0 2px 4px -2px hsl(140 55% 30% / 0.08);
+    --shadow-lg: 0 10px 15px -3px hsl(140 55% 30% / 0.1), 0 4px 6px -4px hsl(140 55% 30% / 0.08);
+    --shadow-xl: 0 20px 25px -5px hsl(140 55% 30% / 0.12), 0 8px 10px -6px hsl(140 55% 30% / 0.1);
+    --shadow-2xl: 0 25px 50px -12px hsl(140 55% 30% / 0.2);
+  }
+
+  .lotus {
+    --background: 330 40% 96%;
+    --foreground: 330 25% 14%;
+    --card: 330 40% 98%;
+    --card-foreground: 330 25% 14%;
+    --popover: 330 35% 97%;
+    --popover-foreground: 330 25% 14%;
+    --primary: 330 60% 55%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 40 60% 88%;
+    --secondary-foreground: 330 25% 16%;
+    --muted: 330 20% 82%;
+    --muted-foreground: 330 15% 38%;
+    --accent: 40 80% 52%;
+    --accent-foreground: 330 40% 18%;
+    --destructive: 0 72% 50%;
+    --destructive-foreground: 0 85% 97%;
+    --border: 330 25% 86%;
+    --input: 330 25% 86%;
+    --ring: 330 60% 55%;
+    --sidebar-background: 330 40% 97%;
+    --sidebar-foreground: 330 25% 14%;
+    --sidebar-primary: 330 60% 55%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 40 60% 88%;
+    --sidebar-accent-foreground: 330 25% 16%;
+    --sidebar-border: 330 25% 86%;
+    --sidebar-ring: 330 60% 55%;
+    --glass-bg: 330 35% 95%;
+    --glass-border: 330 25% 83%;
+    --glow-primary: 330 65% 58%;
+    --glow-accent: 40 80% 55%;
+    --surface-elevated: 330 40% 97%;
+    --chart-1: 330 60% 58%;
+    --chart-2: 40 80% 55%;
+    --chart-3: 350 50% 50%;
+    --chart-4: 20 60% 55%;
+    --chart-5: 330 30% 30%;
+    --sidebar: 330 40% 98%;
+    --shadow-2xs: 0 1px 3px 0px hsl(330 60% 40% / 0.06);
+    --shadow-xs: 0 1px 3px 0px hsl(330 60% 40% / 0.06);
+    --shadow-sm: 0 1px 3px 0px hsl(330 60% 40% / 0.1), 0 1px 2px -1px hsl(40 80% 40% / 0.08);
+    --shadow: 0 1px 3px 0px hsl(330 60% 40% / 0.12), 0 1px 2px -1px hsl(40 80% 40% / 0.1);
+    --shadow-md: 0 4px 6px -1px hsl(330 60% 40% / 0.1), 0 2px 4px -2px hsl(40 80% 40% / 0.08);
+    --shadow-lg: 0 10px 15px -3px hsl(330 60% 40% / 0.1), 0 4px 6px -4px hsl(40 80% 40% / 0.08);
+    --shadow-xl: 0 20px 25px -5px hsl(330 60% 40% / 0.12), 0 8px 10px -6px hsl(40 80% 40% / 0.1);
+    --shadow-2xl: 0 25px 50px -12px hsl(330 60% 40% / 0.2);
   }
 
 }
