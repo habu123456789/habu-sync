@@ -10,6 +10,10 @@ const themeOptions = [
   { value: 'light', label: 'Rose' },
   { value: 'sunrise', label: 'Yellow' },
   { value: 'ocean', label: 'Blue' },
+  { value: 'bhagwa', label: 'Bhagwa' },
+  { value: 'krishna', label: 'Krishna' },
+  { value: 'forest', label: 'Forest' },
+  { value: 'lotus', label: 'Lotus' },
   { value: 'dark', label: 'Dark' },
 ] as const;
 
