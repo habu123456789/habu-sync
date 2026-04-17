@@ -7,6 +7,7 @@ import DailyGitaShlok from '@/components/DailyGitaShlok';
 import DailyAarti from '@/components/DailyAarti';
 import MantraOfTheDay from '@/components/MantraOfTheDay';
 import HanumanChalisa from '@/components/HanumanChalisa';
+import BhajanPlayer from '@/components/BhajanPlayer';
 
 const Index = () => {
   return (
@@ -32,6 +33,10 @@ const Index = () => {
 
       <section className="max-w-4xl mx-auto px-4">
         <DailyAarti />
+      </section>
+
+      <section className="max-w-4xl mx-auto px-4">
+        <BhajanPlayer />
       </section>
 
       <section className="max-w-4xl mx-auto px-4 pb-20">
