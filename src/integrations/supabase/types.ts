@@ -190,6 +190,39 @@ export type Database = {
         }
         Relationships: []
       }
+      site_presence: {
+        Row: {
+          last_seen: string
+          visitor_id: string
+        }
+        Insert: {
+          last_seen?: string
+          visitor_id: string
+        }
+        Update: {
+          last_seen?: string
+          visitor_id?: string
+        }
+        Relationships: []
+      }
+      site_views: {
+        Row: {
+          created_at: string
+          id: string
+          visitor_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          visitor_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          visitor_id?: string | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
