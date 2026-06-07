@@ -30,10 +30,15 @@ const SiteStats = () => {
     }
 
     const heartbeat = async () => {
-      await supabase.from('site_presence').upsert(
-        { visitor_id: visitorId, last_seen: new Date().toISOString() },
-        { onConflict: 'visitor_id' }
-      );
+      // Use secure edge function (service role) instead of direct upsert,
+      // so anonymous visitors don't need write access to site_presence.
+      try {
+        await supabase.functions.invoke('presence-heartbeat', {
+          body: { visitor_id: visitorId },
+        });
+      } catch {
+        // Silent: presence is best-effort.
+      }
     };
 
     const fetchStats = async () => {
