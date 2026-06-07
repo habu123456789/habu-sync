@@ -4,17 +4,21 @@ import Footer from '@/components/Footer';
 import HinglishClock from '@/components/HinglishClock';
 import NaamJapCounter from '@/components/NaamJapCounter';
 import DailyGitaShlok from '@/components/DailyGitaShlok';
-import DailyAarti from '@/components/DailyAarti';
 import MantraOfTheDay from '@/components/MantraOfTheDay';
 import HanumanChalisa from '@/components/HanumanChalisa';
-import BhajanPlayer from '@/components/BhajanPlayer';
+import HinduPanchang from '@/components/HinduPanchang';
 import SiteStats from '@/components/SiteStats';
+import TapJapOverlay from '@/components/TapJapOverlay';
 
 const Index = () => {
   return (
     <div className="min-h-screen">
       <Navbar />
       <Hero />
+
+      <section className="max-w-4xl mx-auto px-4">
+        <HinduPanchang />
+      </section>
 
       <section className="max-w-4xl mx-auto px-4">
         <MantraOfTheDay />
@@ -32,14 +36,6 @@ const Index = () => {
         <HanumanChalisa />
       </section>
 
-      <section className="max-w-4xl mx-auto px-4">
-        <DailyAarti />
-      </section>
-
-      <section className="max-w-4xl mx-auto px-4">
-        <BhajanPlayer />
-      </section>
-
       <section className="max-w-4xl mx-auto px-4 pb-10">
         <HinglishClock />
       </section>
@@ -47,6 +43,7 @@ const Index = () => {
       <SiteStats />
 
       <Footer />
+      <TapJapOverlay />
     </div>
   );
 };

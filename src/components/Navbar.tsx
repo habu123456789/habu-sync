@@ -7,6 +7,8 @@ import { useTheme } from 'next-themes';
 import { flushNaamJapBeforeLogout } from '@/lib/naam-jap-sync';
 
 const themeOptions = [
+  { value: 'liquid', label: 'Liquid 💧' },
+  { value: 'liquid-dark', label: 'Liquid Dark' },
   { value: 'light', label: 'Rose' },
   { value: 'sunrise', label: 'Yellow' },
   { value: 'ocean', label: 'Blue' },

@@ -441,6 +441,22 @@ const NaamJapCounter = () => {
     scheduleAutoSave();
   };
 
+  // Listen for global "tap-anywhere" jap events from TapJapOverlay.
+  // Increments the first (top) counter so the user can jap without aiming.
+  useEffect(() => {
+    const onTap = () => {
+      const first = counts[0];
+      if (!first) {
+        toast.info('Pehle ek naam add karo (e.g. Radhe Radhe)');
+        return;
+      }
+      handleJap(first);
+    };
+    window.addEventListener('naam-jap-tap', onTap);
+    return () => window.removeEventListener('naam-jap-tap', onTap);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [counts, user]);
+
   const handleDelete = async (item: JapCount) => {
     if (!user) return;
 
