@@ -9,6 +9,8 @@ import { useBlogPosts } from '@/hooks/useBlogPosts';
 import { motion } from 'framer-motion';
 import { MapPin, Calendar, Heart, Users, UserPlus, UserMinus, Pencil, Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
+import { profileSchema } from '@/lib/validation';
+import { showDbError } from '@/lib/db-errors';
 
 interface Profile {
   id: string;
@@ -108,15 +110,23 @@ const ProfilePage = () => {
 
   const handleSaveProfile = async () => {
     if (!user) return;
+
+    const parsed = profileSchema.safeParse(editForm);
+    if (!parsed.success) {
+      toast.error(parsed.error.issues[0]?.message ?? 'Invalid input');
+      return;
+    }
+    const p = parsed.data;
+
     const { error } = await supabase.from('profiles').update({
-      display_name: editForm.display_name.trim() || null,
-      bio: editForm.bio.trim() || null,
-      age: editForm.age ? parseInt(editForm.age) : null,
-      place: editForm.place.trim() || null,
+      display_name: p.display_name?.trim() || null,
+      bio: p.bio?.trim() || null,
+      age: p.age,
+      place: p.place?.trim() || null,
     } as any).eq('user_id', user.id);
 
     if (error) {
-      toast.error('Save nahi ho paya: ' + error.message);
+      showDbError('Profile save', error);
     } else {
       toast.success('Profile update ho gaya!');
       setEditing(false);
@@ -125,9 +135,22 @@ const ProfilePage = () => {
   };
 
   const handleDelete = async (postId: string) => {
+    if (!user) return;
     if (!confirm('Kya aap sach mein yeh post delete karna chahte hain?')) return;
+
+    // Defense-in-depth: verify ownership server-side before delete.
+    const { data: ownerRow } = await supabase
+      .from('blog_posts')
+      .select('user_id')
+      .eq('id', postId)
+      .maybeSingle();
+    if (!ownerRow || ownerRow.user_id !== user.id) {
+      toast.error('Aap is post ko delete nahi kar sakte');
+      return;
+    }
+
     const { error } = await supabase.from('blog_posts').delete().eq('id', postId);
-    if (error) toast.error('Delete nahi ho paya');
+    if (error) showDbError('Delete', error);
     else { toast.success('Post delete ho gaya!'); loadProfile(); }
   };
 
