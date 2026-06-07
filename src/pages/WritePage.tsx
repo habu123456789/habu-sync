@@ -6,6 +6,8 @@ import { motion } from 'framer-motion';
 import Navbar from '@/components/Navbar';
 import { toast } from 'sonner';
 import { ArrowLeft, Link as LinkIcon } from 'lucide-react';
+import { blogPostSchema } from '@/lib/validation';
+import { showDbError } from '@/lib/db-errors';
 
 const WritePage = () => {
   const { user, loading: authLoading } = useAuth();
@@ -30,26 +32,16 @@ const WritePage = () => {
   }
 
   const handlePublish = async (asDraft: boolean) => {
-    if (!title.trim() || !content.trim()) {
-      toast.error('Title aur content dono zaroori hain!');
+    const parsed = blogPostSchema.safeParse({
+      title,
+      content,
+      social_link: socialLink,
+    });
+    if (!parsed.success) {
+      toast.error(parsed.error.issues[0]?.message ?? 'Invalid input');
       return;
     }
-
-    if (title.trim().length > 200) {
-      toast.error('Title 200 characters se zyada nahi ho sakta!');
-      return;
-    }
-
-    if (content.trim().length > 50000) {
-      toast.error('Content bohot lamba hai!');
-      return;
-    }
-
-    const trimmedLink = socialLink.trim();
-    if (trimmedLink && !/^https?:\/\//.test(trimmedLink)) {
-      toast.error('Social link ek valid URL hona chahiye (https:// se shuru hona chahiye)!');
-      return;
-    }
+    const data = parsed.data;
 
     setPublishing(true);
 
@@ -65,16 +57,16 @@ const WritePage = () => {
     }
 
     const { error } = await supabase.from('blog_posts').insert({
-      title: title.trim(),
-      content: content.trim(),
+      title: data.title,
+      content: data.content,
       user_id: user.id,
-      social_link: trimmedLink || null,
+      social_link: data.social_link || null,
       published: !asDraft,
       author_name: authorName,
     } as any);
 
     if (error) {
-      toast.error('Post save nahi ho paya: ' + error.message);
+      showDbError('Post save', error);
     } else {
       toast.success(asDraft ? 'Draft save ho gaya!' : 'Post publish ho gaya!');
       navigate('/');

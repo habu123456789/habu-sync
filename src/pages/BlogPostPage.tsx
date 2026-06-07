@@ -8,6 +8,7 @@ import { ArrowLeft, Calendar, User, ExternalLink, Pencil, Trash2, Link as LinkIc
 import DOMPurify from 'dompurify';
 import Navbar from '@/components/Navbar';
 import { toast } from 'sonner';
+import { showDbError } from '@/lib/db-errors';
 
 const BlogPostPage = () => {
   const { postId } = useParams();
@@ -64,11 +65,25 @@ const BlogPostPage = () => {
   const isOwner = isLocal && localPost && user && localPost.user_id === user.id;
 
   const handleDelete = async () => {
+    if (!user || !postId) return;
     if (!confirm('Kya aap sach mein yeh post delete karna chahte hain?')) return;
     setDeleting(true);
-    const { error } = await supabase.from('blog_posts').delete().eq('id', postId!);
+
+    // Defense-in-depth: verify ownership server-side before issuing delete.
+    const { data: ownerRow, error: ownerErr } = await supabase
+      .from('blog_posts')
+      .select('user_id')
+      .eq('id', postId)
+      .maybeSingle();
+    if (ownerErr || !ownerRow || ownerRow.user_id !== user.id) {
+      toast.error('Aap is post ko delete nahi kar sakte');
+      setDeleting(false);
+      return;
+    }
+
+    const { error } = await supabase.from('blog_posts').delete().eq('id', postId);
     if (error) {
-      toast.error('Delete nahi ho paya: ' + error.message);
+      showDbError('Delete', error);
       setDeleting(false);
     } else {
       toast.success('Post delete ho gaya!');
