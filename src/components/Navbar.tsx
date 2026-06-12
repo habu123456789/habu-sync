@@ -90,6 +90,7 @@ const Navbar = () => {
           </button>
           <button
             onClick={() => navigate('/about')}
+            aria-label="About"
             className="flex items-center gap-1.5 text-sm px-3 py-1.5 rounded-full glass text-muted-foreground hover:text-primary transition-colors font-mono"
           >
             <User className="w-3.5 h-3.5" />
@@ -98,6 +99,7 @@ const Navbar = () => {
           {user && (
             <button
               onClick={() => navigate(`/profile/${user.id}`)}
+              aria-label="Profile"
               className="flex items-center gap-1.5 text-sm px-3 py-1.5 rounded-full glass text-muted-foreground hover:text-primary transition-colors font-mono"
             >
               <User className="w-3.5 h-3.5" />
@@ -107,6 +109,7 @@ const Navbar = () => {
           {user && (
             <button
               onClick={() => navigate('/write')}
+              aria-label="Likho (Write a post)"
               className="flex items-center gap-1.5 text-sm px-3 py-1.5 rounded-full bg-primary/10 text-primary hover:bg-primary/20 transition-colors font-mono"
             >
               <PenLine className="w-3.5 h-3.5" />
@@ -118,6 +121,7 @@ const Navbar = () => {
             <button
               onClick={handleSignOut}
               disabled={isLoggingOut}
+              aria-label="Logout"
               className="flex items-center gap-1.5 text-sm px-3 py-1.5 rounded-full glass text-muted-foreground hover:text-primary transition-colors font-mono disabled:opacity-60"
             >
               <LogOut className="w-3.5 h-3.5" />
@@ -126,6 +130,7 @@ const Navbar = () => {
           ) : (
             <button
               onClick={() => navigate('/auth')}
+              aria-label="Login"
               className="flex items-center gap-1.5 text-sm px-3 py-1.5 rounded-full bg-primary/10 text-primary hover:bg-primary/20 transition-colors font-mono"
             >
               <LogIn className="w-3.5 h-3.5" />
