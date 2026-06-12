@@ -352,7 +352,7 @@ const ProfilePage = () => {
             ))}
           </div>
         )}
-      </div>
+      </main>
       <Footer />
     </div>
   );
