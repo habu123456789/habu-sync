@@ -220,7 +220,7 @@ const AuthPage = () => {
             </div>
           </div>
         </motion.div>
-      </div>
+      </main>
     </div>
   );
 };
