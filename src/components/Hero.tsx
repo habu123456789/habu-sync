@@ -28,6 +28,7 @@ const Hero = () => {
         <h1 className="text-4xl md:text-5xl lg:text-6xl font-display font-bold tracking-tight mb-4">
           <span className="text-gradient-primary glow-text">Radhe</span>
           <span className="text-foreground"> Radhe</span>
+          <span className="sr-only"> — Bhakti, Seva, aur Naam Jap</span>
         </h1>
 
         <p className="text-sm md:text-base text-muted-foreground max-w-lg mx-auto leading-relaxed">
