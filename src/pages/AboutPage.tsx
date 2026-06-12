@@ -21,8 +21,23 @@ const links = [
 ];
 
 const AboutPage = () => {
+  const personJsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'Person',
+    name: 'Habu',
+    alternateName: '@habu.in',
+    url: 'https://sevasadan.lovable.app/about',
+    sameAs: socials.map((s) => s.url).filter((u) => !u.startsWith('mailto:')),
+    jobTitle: 'Writer & Storyteller',
+  };
   return (
     <div className="min-h-screen flex flex-col">
+      <SEO
+        title="About Habu — Writer & Storyteller | Radhe Radhe"
+        description="Habu ke baare mein jaano — writer, storyteller, aur ek insaan jo alfaazon mein zindagi dhundhta hai."
+        path="/about"
+        jsonLd={personJsonLd}
+      />
       <Navbar />
       <main className="flex-1 max-w-2xl mx-auto px-4 pt-28 pb-20 w-full">
         <motion.div
@@ -35,7 +50,7 @@ const AboutPage = () => {
             <span className="text-3xl font-display font-bold text-gradient-primary">H</span>
           </div>
           <h1 className="text-2xl md:text-3xl font-display font-bold text-gradient-primary glow-text mb-3">
-            Habu
+            About Habu — Writer & Storyteller
           </h1>
           <p className="text-sm text-primary/50 font-mono">@habu.in</p>
         </motion.div>
