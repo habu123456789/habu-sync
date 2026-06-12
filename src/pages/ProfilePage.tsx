@@ -179,8 +179,13 @@ const ProfilePage = () => {
 
   return (
     <div className="min-h-screen">
+      <SEO
+        title={`${profile.display_name || 'Bhakt'} ka profile | Radhe Radhe`}
+        description={profile.bio ? profile.bio.slice(0, 155) : `${profile.display_name || 'Bhakt'} ke posts aur bhakti journey Radhe Radhe par.`}
+        path={`/profile/${profile.user_id}`}
+      />
       <Navbar />
-      <div className="pt-24 pb-20 max-w-4xl mx-auto px-4">
+      <main className="pt-24 pb-20 max-w-4xl mx-auto px-4">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
