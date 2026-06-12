@@ -78,9 +78,9 @@ const AuthPage = () => {
             <div className="absolute -top-20 -right-20 w-40 h-40 bg-glow-primary/10 rounded-full blur-3xl pointer-events-none" />
 
             <div className="relative z-10">
-              <h2 className="text-2xl md:text-3xl font-display font-bold text-foreground mb-2">
+              <h1 className="text-2xl md:text-3xl font-display font-bold text-foreground mb-2">
                 {titles[mode]}
-              </h2>
+              </h1>
               <p className="text-muted-foreground text-sm mb-8">
                 {subtitles[mode]}
               </p>
