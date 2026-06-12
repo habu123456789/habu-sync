@@ -109,9 +109,9 @@ const HinduPanchang = () => {
 
         <div className="relative">
           <div className="flex items-center justify-between flex-wrap gap-2 mb-1">
-            <h3 className="text-2xl font-display font-bold text-primary">
+            <h2 className="text-2xl font-display font-bold text-primary">
               {data.day}
-            </h3>
+            </h2>
             <span className="text-xs font-mono text-muted-foreground">{data.gregDate}</span>
           </div>
           <p className="text-xs font-mono text-muted-foreground mb-5">

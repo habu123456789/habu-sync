@@ -7,6 +7,7 @@ import { motion } from 'framer-motion';
 import { ArrowLeft, Calendar, User, ExternalLink, Pencil, Trash2, Link as LinkIcon } from 'lucide-react';
 import DOMPurify from 'dompurify';
 import Navbar from '@/components/Navbar';
+import SEO from '@/components/SEO';
 import { toast } from 'sonner';
 import { showDbError } from '@/lib/db-errors';
 
@@ -110,8 +111,29 @@ const BlogPostPage = () => {
     day: 'numeric',
   });
 
+  const plainExcerpt = (post.content || '')
+    .replace(/<[^>]+>/g, '')
+    .replace(/\s+/g, ' ')
+    .trim()
+    .slice(0, 155);
+  const articleJsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'Article',
+    headline: post.title,
+    author: { '@type': 'Person', name: post.author || 'Habu' },
+    datePublished: post.published,
+    url: `https://sevasadan.lovable.app${location.pathname}`,
+  };
+
   return (
     <div className="min-h-screen">
+      <SEO
+        title={`${post.title} | Radhe Radhe`}
+        description={plainExcerpt || `${post.title} — Radhe Radhe blog post.`}
+        path={location.pathname}
+        type="article"
+        jsonLd={articleJsonLd}
+      />
       <Navbar />
       <main className="max-w-3xl mx-auto px-4 pt-32 pb-20">
         <motion.div

@@ -5,6 +5,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { lovable } from '@/integrations/lovable/index';
 import { motion } from 'framer-motion';
 import Navbar from '@/components/Navbar';
+import SEO from '@/components/SEO';
 import { toast } from 'sonner';
 
 const AuthPage = () => {
@@ -67,8 +68,13 @@ const AuthPage = () => {
 
   return (
     <div className="min-h-screen">
+      <SEO
+        title={`${titles[mode]} | Radhe Radhe`}
+        description={subtitles[mode]}
+        path="/auth"
+      />
       <Navbar />
-      <div className="flex items-center justify-center min-h-screen px-4">
+      <main className="flex items-center justify-center min-h-screen px-4">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -78,9 +84,9 @@ const AuthPage = () => {
             <div className="absolute -top-20 -right-20 w-40 h-40 bg-glow-primary/10 rounded-full blur-3xl pointer-events-none" />
 
             <div className="relative z-10">
-              <h2 className="text-2xl md:text-3xl font-display font-bold text-foreground mb-2">
+              <h1 className="text-2xl md:text-3xl font-display font-bold text-foreground mb-2">
                 {titles[mode]}
-              </h2>
+              </h1>
               <p className="text-muted-foreground text-sm mb-8">
                 {subtitles[mode]}
               </p>
@@ -215,7 +221,7 @@ const AuthPage = () => {
             </div>
           </div>
         </motion.div>
-      </div>
+      </main>
     </div>
   );
 };

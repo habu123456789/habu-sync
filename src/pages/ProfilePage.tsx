@@ -5,6 +5,7 @@ import { supabase } from '@/integrations/supabase/client';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import BlogCard from '@/components/BlogCard';
+import SEO from '@/components/SEO';
 import { useBlogPosts } from '@/hooks/useBlogPosts';
 import { motion } from 'framer-motion';
 import { MapPin, Calendar, Heart, Users, UserPlus, UserMinus, Pencil, Loader2 } from 'lucide-react';
@@ -178,8 +179,13 @@ const ProfilePage = () => {
 
   return (
     <div className="min-h-screen">
+      <SEO
+        title={`${profile.display_name || 'Bhakt'} ka profile | Radhe Radhe`}
+        description={profile.bio ? profile.bio.slice(0, 155) : `${profile.display_name || 'Bhakt'} ke posts aur bhakti journey Radhe Radhe par.`}
+        path={`/profile/${profile.user_id}`}
+      />
       <Navbar />
-      <div className="pt-24 pb-20 max-w-4xl mx-auto px-4">
+      <main className="pt-24 pb-20 max-w-4xl mx-auto px-4">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -346,7 +352,7 @@ const ProfilePage = () => {
             ))}
           </div>
         )}
-      </div>
+      </main>
       <Footer />
     </div>
   );
