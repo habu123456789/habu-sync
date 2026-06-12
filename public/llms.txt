@@ -1,0 +1,12 @@
+# Radhe Radhe
+
+> Bhakti-focused web app for Naam Jap counting, daily Bhagavad Gita shlokas, Hindu Panchang (tithi, masa, vikram samvat), Mantra of the Day, and Hanuman Chalisa paath. Written in Hinglish.
+
+## Pages
+
+- [Home](/): Naam Jap counter, daily Gita shlok, Hindu Panchang, Mantra of the Day, Hanuman Chalisa, live site stats.
+- [About](/about): About Habu — writer, storyteller, and creator of Radhe Radhe.
+
+## Optional
+
+- [Login / Sign up](/auth): Account access for posting blogs and tracking jap progress.
