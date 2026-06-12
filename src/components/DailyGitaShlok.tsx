@@ -79,11 +79,11 @@ const DailyGitaShlok = () => {
       className="mt-12 max-w-lg mx-auto"
     >
       <div className="text-center mb-4">
-        <h3 className="text-lg font-display font-bold text-foreground flex items-center justify-center gap-2">
+        <h2 className="text-lg font-display font-bold text-foreground flex items-center justify-center gap-2">
           <BookOpen className="w-5 h-5 text-primary" />
-          Aaj ke Gita Shlok
+          Aaj Ke Gita Shlok
           <BookOpen className="w-5 h-5 text-primary" />
-        </h3>
+        </h2>
         <p className="text-xs text-muted-foreground font-mono mt-1">
           Roz 3 naye shlok Shrimad Bhagavad Gita se 🙏
         </p>
@@ -95,6 +95,7 @@ const DailyGitaShlok = () => {
           <button
             key={i}
             onClick={() => setActiveIndex(i)}
+            aria-label={`Go to shlok ${i + 1}`}
             className={`w-2.5 h-2.5 rounded-full transition-all ${
               i === activeIndex ? 'bg-primary scale-125' : 'bg-border hover:bg-muted-foreground/50'
             }`}
