@@ -7,6 +7,7 @@ import { motion } from 'framer-motion';
 import { ArrowLeft, Calendar, User, ExternalLink, Pencil, Trash2, Link as LinkIcon } from 'lucide-react';
 import DOMPurify from 'dompurify';
 import Navbar from '@/components/Navbar';
+import SEO from '@/components/SEO';
 import { toast } from 'sonner';
 import { showDbError } from '@/lib/db-errors';
 
