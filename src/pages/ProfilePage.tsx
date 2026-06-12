@@ -5,6 +5,7 @@ import { supabase } from '@/integrations/supabase/client';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import BlogCard from '@/components/BlogCard';
+import SEO from '@/components/SEO';
 import { useBlogPosts } from '@/hooks/useBlogPosts';
 import { motion } from 'framer-motion';
 import { MapPin, Calendar, Heart, Users, UserPlus, UserMinus, Pencil, Loader2 } from 'lucide-react';
