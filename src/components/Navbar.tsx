@@ -1,10 +1,11 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
-import { BookOpen, PenLine, LogIn, LogOut, User, Palette } from 'lucide-react';
+import { BookOpen, PenLine, LogIn, LogOut, User, Palette, Moon, Sun } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import { useTheme } from 'next-themes';
 import { flushNaamJapBeforeLogout } from '@/lib/naam-jap-sync';
+
 
 const themeOptions = [
   { value: 'liquid', label: 'Liquid 💧' },
