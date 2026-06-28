@@ -1,10 +1,11 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
-import { BookOpen, PenLine, LogIn, LogOut, User, Palette } from 'lucide-react';
+import { BookOpen, PenLine, LogIn, LogOut, User, Palette, Moon, Sun } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import { useTheme } from 'next-themes';
 import { flushNaamJapBeforeLogout } from '@/lib/naam-jap-sync';
+
 
 const themeOptions = [
   { value: 'liquid', label: 'Liquid 💧' },
@@ -24,6 +25,18 @@ const Navbar = () => {
   const { user, signOut } = useAuth();
   const { theme, setTheme } = useTheme();
   const [isLoggingOut, setIsLoggingOut] = useState(false);
+  const [blackMode, setBlackMode] = useState<boolean>(() => {
+    if (typeof window === 'undefined') return false;
+    return localStorage.getItem('black-mode') === '1';
+  });
+
+  useEffect(() => {
+    const root = document.documentElement;
+    if (blackMode) root.classList.add('black-mode');
+    else root.classList.remove('black-mode');
+    localStorage.setItem('black-mode', blackMode ? '1' : '0');
+  }, [blackMode]);
+
 
   const handleSignOut = async () => {
     setIsLoggingOut(true);
@@ -90,10 +103,22 @@ const Navbar = () => {
             <span className="hidden sm:inline">{currentThemeLabel}</span>
           </button>
           <button
+            onClick={() => setBlackMode((v) => !v)}
+            aria-label={blackMode ? 'Disable black mode' : 'Enable black mode'}
+            title={blackMode ? 'Black mode on' : 'Black mode off'}
+            className={`flex items-center gap-1.5 text-sm px-2.5 py-1.5 rounded-full glass transition-colors ${
+              blackMode ? 'bg-foreground/10 text-foreground' : 'text-muted-foreground hover:text-primary'
+            }`}
+          >
+            {blackMode ? <Sun className="w-3.5 h-3.5" /> : <Moon className="w-3.5 h-3.5" />}
+            <span className="hidden sm:inline">{blackMode ? 'Light' : 'Black'}</span>
+          </button>
+          <button
             onClick={() => navigate('/about')}
             aria-label="About"
             className="flex items-center gap-1.5 text-sm px-3 py-1.5 rounded-full glass text-muted-foreground hover:text-primary transition-colors font-mono"
           >
+
             <User className="w-3.5 h-3.5" />
             <span className="hidden sm:inline">About</span>
           </button>
