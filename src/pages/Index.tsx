@@ -52,52 +52,49 @@ const Index = () => {
         {/* Live Date / Day / Time / Festival strip */}
         <DateTimeStrip />
 
-        {/* Tabbed sections — sidebar on md+, horizontal on mobile */}
+        {/* Tabbed sections — landscape (horizontal) liquid-glass tabs */}
         <section className="max-w-6xl mx-auto px-4 mb-16">
           <Tabs defaultValue="jap" className="w-full">
-            <div className="grid grid-cols-1 md:grid-cols-[220px_1fr] gap-6">
-              {/* Tab list — vertical glass sidebar on md+ */}
-              <div className="md:sticky md:top-20 md:self-start">
-                <div className="glass rounded-2xl p-2 border border-white/20 shadow-xl">
-                  <TabsList className="flex md:flex-col h-auto w-full bg-transparent p-0 gap-1 overflow-x-auto md:overflow-visible">
-                    {tabs.map(({ id, label, icon: Icon }) => (
-                      <TabsTrigger
-                        key={id}
-                        value={id}
-                        className="w-full justify-start gap-3 px-4 py-3 rounded-xl text-sm md:text-base font-display whitespace-nowrap
-                          text-muted-foreground hover:text-foreground hover:bg-card/60 transition-all
-                          data-[state=active]:bg-gradient-to-r data-[state=active]:from-primary data-[state=active]:to-primary/80
-                          data-[state=active]:text-primary-foreground data-[state=active]:shadow-lg data-[state=active]:shadow-primary/30"
-                      >
-                        <Icon className="w-4 h-4 md:w-5 md:h-5 shrink-0" />
-                        <span>{label}</span>
-                      </TabsTrigger>
-                    ))}
-                  </TabsList>
-                </div>
+            {/* Horizontal liquid-glass tab bar */}
+            <div className="flex justify-center mb-8">
+              <div className="liquid-glass rounded-full p-2 shadow-2xl max-w-full overflow-x-auto">
+                <TabsList className="flex h-auto bg-transparent p-0 gap-1">
+                  {tabs.map(({ id, label, icon: Icon }) => (
+                    <TabsTrigger
+                      key={id}
+                      value={id}
+                      className="liquid-tab flex-row items-center gap-2 px-4 md:px-5 py-2.5 rounded-full text-sm md:text-base font-display whitespace-nowrap
+                        text-muted-foreground hover:text-foreground bg-transparent border-0
+                        data-[state=active]:shadow-none"
+                    >
+                      <Icon className="w-4 h-4 md:w-5 md:h-5 shrink-0" />
+                      <span>{label}</span>
+                    </TabsTrigger>
+                  ))}
+                </TabsList>
               </div>
+            </div>
 
-              {/* Tab content */}
-              <div className="min-h-[400px]">
-                <TabsContent value="jap" className="focus-visible:outline-none mt-0">
-                  <NaamJapCounter />
-                </TabsContent>
-                <TabsContent value="panchang" className="focus-visible:outline-none mt-0">
-                  <HinduPanchang />
-                </TabsContent>
-                <TabsContent value="mantra" className="focus-visible:outline-none mt-0">
-                  <MantraOfTheDay />
-                </TabsContent>
-                <TabsContent value="gita" className="focus-visible:outline-none mt-0">
-                  <DailyGitaShlok />
-                </TabsContent>
-                <TabsContent value="chalisa" className="focus-visible:outline-none mt-0">
-                  <HanumanChalisa />
-                </TabsContent>
-                <TabsContent value="clock" className="focus-visible:outline-none mt-0">
-                  <HinglishClock />
-                </TabsContent>
-              </div>
+            {/* Tab content */}
+            <div className="min-h-[400px]">
+              <TabsContent value="jap" className="focus-visible:outline-none mt-0 animate-fade-in">
+                <NaamJapCounter />
+              </TabsContent>
+              <TabsContent value="panchang" className="focus-visible:outline-none mt-0 animate-fade-in">
+                <HinduPanchang />
+              </TabsContent>
+              <TabsContent value="mantra" className="focus-visible:outline-none mt-0 animate-fade-in">
+                <MantraOfTheDay />
+              </TabsContent>
+              <TabsContent value="gita" className="focus-visible:outline-none mt-0 animate-fade-in">
+                <DailyGitaShlok />
+              </TabsContent>
+              <TabsContent value="chalisa" className="focus-visible:outline-none mt-0 animate-fade-in">
+                <HanumanChalisa />
+              </TabsContent>
+              <TabsContent value="clock" className="focus-visible:outline-none mt-0 animate-fade-in">
+                <HinglishClock />
+              </TabsContent>
             </div>
           </Tabs>
         </section>
