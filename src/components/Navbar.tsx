@@ -103,10 +103,22 @@ const Navbar = () => {
             <span className="hidden sm:inline">{currentThemeLabel}</span>
           </button>
           <button
+            onClick={() => setBlackMode((v) => !v)}
+            aria-label={blackMode ? 'Disable black mode' : 'Enable black mode'}
+            title={blackMode ? 'Black mode on' : 'Black mode off'}
+            className={`flex items-center gap-1.5 text-sm px-2.5 py-1.5 rounded-full glass transition-colors ${
+              blackMode ? 'bg-foreground/10 text-foreground' : 'text-muted-foreground hover:text-primary'
+            }`}
+          >
+            {blackMode ? <Sun className="w-3.5 h-3.5" /> : <Moon className="w-3.5 h-3.5" />}
+            <span className="hidden sm:inline">{blackMode ? 'Light' : 'Black'}</span>
+          </button>
+          <button
             onClick={() => navigate('/about')}
             aria-label="About"
             className="flex items-center gap-1.5 text-sm px-3 py-1.5 rounded-full glass text-muted-foreground hover:text-primary transition-colors font-mono"
           >
+
             <User className="w-3.5 h-3.5" />
             <span className="hidden sm:inline">About</span>
           </button>
