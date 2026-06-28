@@ -59,8 +59,9 @@ const Navbar = () => {
           <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center border border-primary/20 group-hover:bg-primary/20 transition-colors">
             <BookOpen className="w-4 h-4 text-primary" />
           </div>
-          <span className="font-display font-bold text-lg text-foreground">
-            Radhe <span className="text-primary">Radhe</span>
+          <span className="font-display font-bold text-lg text-foreground leading-tight block">
+            Habu.in&nbsp;by
+            <span className="block text-[10px] font-normal text-muted-foreground">Narendrasainiii</span>
           </span>
         </button>
 
