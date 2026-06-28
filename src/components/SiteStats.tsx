@@ -54,8 +54,9 @@ const SiteStats = () => {
       }
     };
 
-    heartbeat().then(fetchStats);
-    const hbInterval = setInterval(heartbeat, 30_000);
+    // First call also logs the view (if first in session); subsequent heartbeats don't.
+    heartbeat(shouldLogView).then(fetchStats);
+    const hbInterval = setInterval(() => heartbeat(false), 30_000);
     const statsInterval = setInterval(fetchStats, 15_000);
 
     return () => {
