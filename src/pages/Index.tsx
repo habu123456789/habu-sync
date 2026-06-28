@@ -1,3 +1,4 @@
+import { useState, useRef, useEffect } from 'react';
 import Hero from '@/components/Hero';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
@@ -37,6 +38,35 @@ const Index = () => {
     { id: 'clock', label: 'घड़ी', icon: Clock },
   ];
 
+  const [active, setActive] = useState('jap');
+  const tabBarRef = useRef<HTMLDivElement>(null);
+  const touchStartX = useRef<number | null>(null);
+  const touchStartY = useRef<number | null>(null);
+
+  // Auto-scroll active pill into view (mobile horizontal scroll)
+  useEffect(() => {
+    const el = tabBarRef.current?.querySelector<HTMLElement>(`[data-tab-id="${active}"]`);
+    el?.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+  }, [active]);
+
+  // Swipe gesture on content panel to switch tabs
+  const onTouchStart = (e: React.TouchEvent) => {
+    touchStartX.current = e.touches[0].clientX;
+    touchStartY.current = e.touches[0].clientY;
+  };
+  const onTouchEnd = (e: React.TouchEvent) => {
+    if (touchStartX.current === null || touchStartY.current === null) return;
+    const dx = e.changedTouches[0].clientX - touchStartX.current;
+    const dy = e.changedTouches[0].clientY - touchStartY.current;
+    touchStartX.current = null;
+    touchStartY.current = null;
+    // Only horizontal swipes, ignore vertical scrolls
+    if (Math.abs(dx) < 60 || Math.abs(dy) > Math.abs(dx)) return;
+    const idx = tabs.findIndex((t) => t.id === active);
+    if (dx < 0 && idx < tabs.length - 1) setActive(tabs[idx + 1].id);
+    if (dx > 0 && idx > 0) setActive(tabs[idx - 1].id);
+  };
+
   return (
     <div className="min-h-screen">
       <SEO
@@ -73,10 +103,14 @@ const Index = () => {
             <div className="absolute bottom-10 left-[40%] w-28 h-28 rounded-full bg-gradient-to-tr from-primary/15 to-accent/15 blur-2xl animate-float" style={{ animationDelay: '4s' }} />
           </div>
 
-          <Tabs defaultValue="jap" className="w-full">
-            {/* Horizontal liquid-glass tab bar */}
+          <Tabs value={active} onValueChange={setActive} className="w-full">
+            {/* Horizontal liquid-glass tab bar — swipeable / snap-scroll on mobile */}
             <div className="flex justify-center mb-10">
-              <div className="liquid-glass rounded-full p-2 shadow-2xl max-w-full overflow-x-auto">
+              <div
+                ref={tabBarRef}
+                className="liquid-glass rounded-full p-2 shadow-2xl max-w-full overflow-x-auto scrollbar-none snap-x snap-mandatory touch-pan-x overscroll-x-contain"
+                style={{ WebkitOverflowScrolling: 'touch' }}
+              >
                 <TabsList
                   className="flex h-auto bg-transparent p-1 gap-1 flex-nowrap"
                   style={{ filter: 'url(#liquid-goo)' }}
@@ -85,7 +119,8 @@ const Index = () => {
                     <TabsTrigger
                       key={id}
                       value={id}
-                      className="liquid-tab flex-row items-center gap-2 px-4 md:px-5 py-2.5 rounded-full text-sm md:text-base font-display whitespace-nowrap
+                      data-tab-id={id}
+                      className="liquid-tab snap-center flex-row items-center gap-2 px-4 md:px-5 py-2.5 rounded-full text-sm md:text-base font-display whitespace-nowrap
                         text-foreground/70 hover:text-foreground bg-card/30 border-0
                         data-[state=active]:shadow-none"
                     >
@@ -97,8 +132,17 @@ const Index = () => {
               </div>
             </div>
 
-            {/* Tab content wrapped in liquid-glass panel */}
-            <div className="liquid-glass rounded-3xl p-6 md:p-10 min-h-[400px] shadow-2xl">
+            {/* Swipe hint for mobile */}
+            <p className="md:hidden text-center text-xs text-muted-foreground mb-3 select-none">
+              ← swipe karke tabs change karo →
+            </p>
+
+            {/* Tab content — swipeable on touch */}
+            <div
+              className="liquid-glass rounded-3xl p-6 md:p-10 min-h-[400px] shadow-2xl touch-pan-y"
+              onTouchStart={onTouchStart}
+              onTouchEnd={onTouchEnd}
+            >
               <TabsContent value="jap" className="focus-visible:outline-none mt-0 animate-fade-in">
                 <NaamJapCounter />
               </TabsContent>
