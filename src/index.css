@@ -552,6 +552,9 @@
       radial-gradient(circle at 82% 78%, hsl(var(--accent) / 0.08), transparent 45%) !important;
     background-color: hsl(var(--background));
   }
+}
+
+
 
 
 @layer base {
