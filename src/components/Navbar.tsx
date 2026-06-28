@@ -25,6 +25,18 @@ const Navbar = () => {
   const { user, signOut } = useAuth();
   const { theme, setTheme } = useTheme();
   const [isLoggingOut, setIsLoggingOut] = useState(false);
+  const [blackMode, setBlackMode] = useState<boolean>(() => {
+    if (typeof window === 'undefined') return false;
+    return localStorage.getItem('black-mode') === '1';
+  });
+
+  useEffect(() => {
+    const root = document.documentElement;
+    if (blackMode) root.classList.add('black-mode');
+    else root.classList.remove('black-mode');
+    localStorage.setItem('black-mode', blackMode ? '1' : '0');
+  }, [blackMode]);
+
 
   const handleSignOut = async () => {
     setIsLoggingOut(true);
