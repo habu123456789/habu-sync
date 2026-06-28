@@ -21,23 +21,19 @@ const SiteStats = () => {
     const visitorId = getVisitorId();
     let mounted = true;
 
-    // Log this page view (once per session)
+    // Log this page view (once per session) via the secure edge function.
+    // Anonymous direct inserts on site_views are no longer allowed.
     const sessionKey = 'rr_view_logged';
-    if (!sessionStorage.getItem(sessionKey)) {
-      supabase.from('site_views').insert({ visitor_id: visitorId }).then(() => {
-        sessionStorage.setItem(sessionKey, '1');
-      });
-    }
+    const shouldLogView = !sessionStorage.getItem(sessionKey);
+    if (shouldLogView) sessionStorage.setItem(sessionKey, '1');
 
-    const heartbeat = async () => {
-      // Use secure edge function (service role) instead of direct upsert,
-      // so anonymous visitors don't need write access to site_presence.
+    const heartbeat = async (logView = false) => {
       try {
         await supabase.functions.invoke('presence-heartbeat', {
-          body: { visitor_id: visitorId },
+          body: { visitor_id: visitorId, log_view: logView },
         });
       } catch {
-        // Silent: presence is best-effort.
+        // Silent: presence/view logging is best-effort.
       }
     };
 
@@ -58,8 +54,9 @@ const SiteStats = () => {
       }
     };
 
-    heartbeat().then(fetchStats);
-    const hbInterval = setInterval(heartbeat, 30_000);
+    // First call also logs the view (if first in session); subsequent heartbeats don't.
+    heartbeat(shouldLogView).then(fetchStats);
+    const hbInterval = setInterval(() => heartbeat(false), 30_000);
     const statsInterval = setInterval(fetchStats, 15_000);
 
     return () => {
