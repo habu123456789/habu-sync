@@ -20,7 +20,7 @@ Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
   if (req.method !== "POST") return json({ error: "Method not allowed" }, 405);
 
-  let body: { visitor_id?: unknown };
+  let body: { visitor_id?: unknown; log_view?: unknown };
   try {
     body = await req.json();
   } catch {
@@ -31,6 +31,7 @@ Deno.serve(async (req) => {
   if (!VISITOR_RE.test(visitorId)) {
     return json({ error: "Invalid visitor_id" }, 400);
   }
+  const logView = body.log_view === true;
 
   const supabaseUrl = Deno.env.get("SUPABASE_URL");
   const serviceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
@@ -50,6 +51,17 @@ Deno.serve(async (req) => {
   if (error) {
     console.error("presence-heartbeat upsert failed", error);
     return json({ error: "Heartbeat failed" }, 500);
+  }
+
+  // Optional: log a page view (caller decides — typically once per session).
+  if (logView) {
+    const { error: viewErr } = await admin
+      .from("site_views")
+      .insert({ visitor_id: visitorId });
+    if (viewErr) {
+      console.error("site_views insert failed", viewErr);
+      // Don't fail the whole request — heartbeat already succeeded.
+    }
   }
 
   return json({ ok: true });
