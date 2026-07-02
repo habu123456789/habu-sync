@@ -108,15 +108,28 @@ const Navbar = () => {
             <span className="hidden sm:inline">{currentThemeLabel}</span>
           </button>
           <button
-            onClick={() => setBlackMode((v) => !v)}
-            aria-label={blackMode ? 'Disable black mode' : 'Enable black mode'}
-            title={blackMode ? 'Black mode on' : 'Black mode off'}
+            onClick={() => {
+              // If user is on a Neo-Brutalism theme, swap between nb-light / nb-dark
+              if (theme === 'nb-light') { setTheme('nb-dark'); return; }
+              if (theme === 'nb-dark') { setTheme('nb-light'); return; }
+              setBlackMode((v) => !v);
+            }}
+            aria-label={
+              theme === 'nb-dark' ? 'Switch to light mode'
+              : theme === 'nb-light' ? 'Switch to dark mode'
+              : blackMode ? 'Disable black mode' : 'Enable black mode'
+            }
+            title="Toggle light / dark"
             className={`flex items-center gap-1.5 text-sm px-2.5 py-1.5 rounded-full glass transition-colors ${
-              blackMode ? 'bg-foreground/10 text-foreground' : 'text-muted-foreground hover:text-primary'
+              (blackMode || theme === 'nb-dark') ? 'bg-foreground/10 text-foreground' : 'text-muted-foreground hover:text-primary'
             }`}
           >
-            {blackMode ? <Sun className="w-3.5 h-3.5" /> : <Moon className="w-3.5 h-3.5" />}
-            <span className="hidden sm:inline">{blackMode ? 'Light' : 'Black'}</span>
+            {(theme === 'nb-dark' || (theme !== 'nb-light' && blackMode))
+              ? <Sun className="w-3.5 h-3.5" />
+              : <Moon className="w-3.5 h-3.5" />}
+            <span className="hidden sm:inline">
+              {theme === 'nb-dark' ? 'Light' : theme === 'nb-light' ? 'Dark' : (blackMode ? 'Light' : 'Black')}
+            </span>
           </button>
           <button
             onClick={() => navigate('/about')}
