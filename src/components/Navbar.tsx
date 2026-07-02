@@ -17,7 +17,9 @@ const themeOptions = [
   { value: 'krishna', label: 'Krishna' },
   { value: 'forest', label: 'Forest' },
   { value: 'lotus', label: 'Lotus' },
+  { value: 'brutal', label: 'Brutal 🖤' },
   { value: 'dark', label: 'Dark' },
+
 ] as const;
 
 const Navbar = () => {

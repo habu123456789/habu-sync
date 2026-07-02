@@ -552,7 +552,110 @@
       radial-gradient(circle at 82% 78%, hsl(var(--accent) / 0.08), transparent 45%) !important;
     background-color: hsl(var(--background));
   }
+
+  /* Neo-Brutalism Dark — hard edges, chunky borders, offset shadows, hot accent */
+  .brutal {
+    --background: 0 0% 6%;
+    --foreground: 55 100% 92%;
+    --card: 0 0% 10%;
+    --card-foreground: 55 100% 92%;
+    --popover: 0 0% 8%;
+    --popover-foreground: 55 100% 92%;
+    --primary: 55 100% 55%;
+    --primary-foreground: 0 0% 5%;
+    --secondary: 0 0% 14%;
+    --secondary-foreground: 55 100% 92%;
+    --muted: 0 0% 16%;
+    --muted-foreground: 0 0% 72%;
+    --accent: 340 95% 58%;
+    --accent-foreground: 0 0% 100%;
+    --destructive: 0 90% 55%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 55 100% 92%;
+    --input: 0 0% 12%;
+    --ring: 55 100% 55%;
+    --radius: 0rem;
+    --sidebar-background: 0 0% 8%;
+    --sidebar-foreground: 55 100% 92%;
+    --sidebar-primary: 55 100% 55%;
+    --sidebar-primary-foreground: 0 0% 5%;
+    --sidebar-accent: 340 95% 58%;
+    --sidebar-accent-foreground: 0 0% 100%;
+    --sidebar-border: 55 100% 92%;
+    --sidebar-ring: 55 100% 55%;
+    --glass-bg: 0 0% 10%;
+    --glass-border: 55 100% 92%;
+    --glow-primary: 55 100% 55%;
+    --glow-accent: 340 95% 58%;
+    --surface-elevated: 0 0% 12%;
+    --chart-1: 55 100% 55%;
+    --chart-2: 340 95% 58%;
+    --chart-3: 190 90% 55%;
+    --chart-4: 120 80% 55%;
+    --chart-5: 25 100% 55%;
+    --sidebar: 0 0% 8%;
+    --shadow-2xs: 2px 2px 0 0 hsl(55 100% 92%);
+    --shadow-xs: 3px 3px 0 0 hsl(55 100% 92%);
+    --shadow-sm: 4px 4px 0 0 hsl(55 100% 92%);
+    --shadow: 5px 5px 0 0 hsl(55 100% 92%);
+    --shadow-md: 6px 6px 0 0 hsl(55 100% 92%);
+    --shadow-lg: 8px 8px 0 0 hsl(55 100% 92%);
+    --shadow-xl: 10px 10px 0 0 hsl(55 100% 92%);
+    --shadow-2xl: 14px 14px 0 0 hsl(55 100% 92%);
+  }
+
+  .brutal body {
+    background-color: hsl(var(--background));
+    background-image:
+      linear-gradient(hsl(55 100% 92% / 0.06) 1px, transparent 1px),
+      linear-gradient(90deg, hsl(55 100% 92% / 0.06) 1px, transparent 1px) !important;
+    background-size: 32px 32px, 32px 32px !important;
+  }
+
+  .brutal * { border-radius: 0 !important; }
+
+  .brutal .glass,
+  .brutal .liquid-glass {
+    background: hsl(var(--card)) !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    border: 3px solid hsl(var(--border)) !important;
+    box-shadow: 8px 8px 0 0 hsl(var(--border)) !important;
+  }
+  .brutal .liquid-glass::before { display: none; }
+
+  .brutal .liquid-tab {
+    border: 2px solid hsl(var(--border)) !important;
+    background: hsl(var(--card)) !important;
+    color: hsl(var(--foreground)) !important;
+    font-weight: 800 !important;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    transition: transform 0.12s ease, box-shadow 0.12s ease !important;
+    transform: none !important;
+    box-shadow: 3px 3px 0 0 hsl(var(--border)) !important;
+  }
+  .brutal .liquid-tab:hover {
+    transform: translate(-2px, -2px) !important;
+    box-shadow: 5px 5px 0 0 hsl(var(--border)) !important;
+  }
+  .brutal .liquid-tab[data-state="active"] {
+    background: hsl(var(--primary)) !important;
+    color: hsl(var(--primary-foreground)) !important;
+    box-shadow: 5px 5px 0 0 hsl(var(--accent)) !important;
+    transform: translate(-1px, -1px) !important;
+  }
+  .brutal .liquid-tab[data-state="active"]::after { display: none; }
+
+  .brutal button,
+  .brutal .rounded-full,
+  .brutal .rounded-lg,
+  .brutal .rounded-md,
+  .brutal .rounded-xl,
+  .brutal .rounded-2xl,
+  .brutal .rounded-3xl { border-radius: 0 !important; }
 }
+
 
 
 
