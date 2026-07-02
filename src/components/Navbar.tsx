@@ -18,6 +18,8 @@ const themeOptions = [
   { value: 'forest', label: 'Forest' },
   { value: 'lotus', label: 'Lotus' },
   { value: 'brutal', label: 'Brutal 🖤' },
+  { value: 'brutal-paper', label: 'Brutal Paper 📜' },
+
   { value: 'dark', label: 'Dark' },
 
 ] as const;
