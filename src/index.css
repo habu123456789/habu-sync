@@ -649,6 +649,200 @@
   }
   .brutal-paper .liquid-tab[data-state="active"]::after { display: none; }
 
+  /* ===================================================================
+     Neo-Brutalism (exact spec) — nb-light / nb-dark
+     Space Grotesk headings, Inter body, 3-4px black borders,
+     hard 4px @ 45deg solid black shadows, 24-32px padding.
+     =================================================================== */
+  .nb-light {
+    --background: 0 0% 100%;
+    --foreground: 0 0% 0%;
+    --card: 0 0% 96%;
+    --card-foreground: 0 0% 0%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 0 0% 0%;
+    --primary: 216 100% 50%;         /* #0066FF */
+    --primary-foreground: 0 0% 100%;
+    --secondary: 0 0% 96%;
+    --secondary-foreground: 0 0% 0%;
+    --muted: 0 0% 92%;
+    --muted-foreground: 0 0% 25%;
+    --accent: 324 100% 50%;          /* #FF0099 */
+    --accent-foreground: 0 0% 100%;
+    --destructive: 0 90% 48%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 0 0% 0%;
+    --input: 0 0% 100%;
+    --ring: 0 0% 0%;
+    --radius: 0rem;
+    --sidebar-background: 0 0% 100%;
+    --sidebar-foreground: 0 0% 0%;
+    --sidebar-primary: 216 100% 50%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 324 100% 50%;
+    --sidebar-accent-foreground: 0 0% 100%;
+    --sidebar-border: 0 0% 0%;
+    --sidebar-ring: 0 0% 0%;
+    --glass-bg: 0 0% 96%;
+    --glass-border: 0 0% 0%;
+    --glow-primary: 216 100% 50%;
+    --glow-accent: 324 100% 50%;
+    --surface-elevated: 0 0% 100%;
+    --sidebar: 0 0% 100%;
+  }
+
+  .nb-dark {
+    --background: 0 0% 10%;          /* #1a1a1a */
+    --foreground: 0 0% 100%;
+    --card: 0 0% 18%;                /* #2d2d2d */
+    --card-foreground: 0 0% 100%;
+    --popover: 0 0% 14%;
+    --popover-foreground: 0 0% 100%;
+    --primary: 135 100% 50%;         /* #00FF66 */
+    --primary-foreground: 0 0% 0%;
+    --secondary: 0 0% 18%;
+    --secondary-foreground: 0 0% 100%;
+    --muted: 0 0% 22%;
+    --muted-foreground: 0 0% 75%;
+    --accent: 216 100% 50%;          /* #0066FF */
+    --accent-foreground: 0 0% 100%;
+    --destructive: 0 85% 55%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 0 0% 0%;
+    --input: 0 0% 18%;
+    --ring: 0 0% 0%;
+    --radius: 0rem;
+    --sidebar-background: 0 0% 10%;
+    --sidebar-foreground: 0 0% 100%;
+    --sidebar-primary: 135 100% 50%;
+    --sidebar-primary-foreground: 0 0% 0%;
+    --sidebar-accent: 216 100% 50%;
+    --sidebar-accent-foreground: 0 0% 100%;
+    --sidebar-border: 0 0% 0%;
+    --sidebar-ring: 0 0% 0%;
+    --glass-bg: 0 0% 18%;
+    --glass-border: 0 0% 0%;
+    --glow-primary: 135 100% 50%;
+    --glow-accent: 216 100% 50%;
+    --surface-elevated: 0 0% 18%;
+    --sidebar: 0 0% 10%;
+  }
+
+  /* Shared neo-brutalism structural rules (applies to both nb themes) */
+  .nb-light, .nb-dark {
+    --shadow-2xs: 2px 2px 0 0 #000;
+    --shadow-xs: 3px 3px 0 0 #000;
+    --shadow-sm: 4px 4px 0 0 #000;
+    --shadow: 4px 4px 0 0 #000;
+    --shadow-md: 6px 6px 0 0 #000;
+    --shadow-lg: 8px 8px 0 0 #000;
+    --shadow-xl: 10px 10px 0 0 #000;
+    --shadow-2xl: 12px 12px 0 0 #000;
+  }
+
+  .nb-light body,
+  .nb-dark body {
+    font-family: 'Inter', system-ui, sans-serif !important;
+    background-image: none !important;
+    background-color: hsl(var(--background)) !important;
+    transition: background-color 0.3s ease, color 0.3s ease;
+  }
+
+  .nb-light h1, .nb-light h2, .nb-light h3, .nb-light h4, .nb-light h5, .nb-light h6,
+  .nb-dark h1, .nb-dark h2, .nb-dark h3, .nb-dark h4, .nb-dark h5, .nb-dark h6,
+  .nb-light .font-display, .nb-dark .font-display {
+    font-family: 'Space Grotesk', system-ui, sans-serif !important;
+    font-weight: 700 !important;
+    letter-spacing: -0.01em;
+  }
+
+  .nb-light *, .nb-dark * {
+    border-radius: 0 !important;
+    transition: background-color 0.3s ease, color 0.3s ease,
+                border-color 0.3s ease, box-shadow 0.3s ease,
+                transform 0.15s ease !important;
+  }
+
+  /* Cards / glass surfaces */
+  .nb-light .glass, .nb-light .liquid-glass,
+  .nb-dark .glass, .nb-dark .liquid-glass,
+  .nb-light [class*="rounded"][class*="border"],
+  .nb-dark [class*="rounded"][class*="border"] {
+    background: hsl(var(--card)) !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    border: 4px solid #000 !important;
+    box-shadow: 4px 4px 0 0 #000 !important;
+    padding: 1.5rem;
+  }
+  .nb-light .liquid-glass::before,
+  .nb-dark .liquid-glass::before { display: none !important; }
+
+  /* Buttons */
+  .nb-light button:not(.liquid-tab):not([data-tab-id]),
+  .nb-dark button:not(.liquid-tab):not([data-tab-id]) {
+    border: 3px solid #000 !important;
+    box-shadow: 4px 4px 0 0 #000 !important;
+    font-weight: 700 !important;
+    font-family: 'Space Grotesk', system-ui, sans-serif !important;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+  }
+  .nb-light button:not(.liquid-tab):hover,
+  .nb-dark button:not(.liquid-tab):hover {
+    transform: translate(-2px, -2px);
+    box-shadow: 6px 6px 0 0 #000 !important;
+  }
+  .nb-light button:not(.liquid-tab):active,
+  .nb-dark button:not(.liquid-tab):active {
+    transform: translate(2px, 2px);
+    box-shadow: 1px 1px 0 0 #000 !important;
+  }
+
+  /* Inputs / textareas */
+  .nb-light input, .nb-light textarea, .nb-light select,
+  .nb-dark input, .nb-dark textarea, .nb-dark select {
+    border: 3px solid #000 !important;
+    box-shadow: 4px 4px 0 0 #000 !important;
+    background: hsl(var(--input)) !important;
+    color: hsl(var(--foreground)) !important;
+    padding: 0.75rem 1rem !important;
+    font-family: 'Inter', system-ui, sans-serif !important;
+  }
+  .nb-light input:focus, .nb-light textarea:focus,
+  .nb-dark input:focus, .nb-dark textarea:focus {
+    outline: none !important;
+    transform: translate(-1px, -1px);
+    box-shadow: 5px 5px 0 0 hsl(var(--primary)) !important;
+  }
+
+  /* Tabs */
+  .nb-light .liquid-tab, .nb-dark .liquid-tab {
+    border: 3px solid #000 !important;
+    background: hsl(var(--card)) !important;
+    color: hsl(var(--foreground)) !important;
+    font-weight: 700 !important;
+    font-family: 'Space Grotesk', system-ui, sans-serif !important;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    box-shadow: 3px 3px 0 0 #000 !important;
+    transform: none !important;
+  }
+  .nb-light .liquid-tab:hover, .nb-dark .liquid-tab:hover {
+    transform: translate(-2px, -2px) !important;
+    box-shadow: 5px 5px 0 0 #000 !important;
+  }
+  .nb-light .liquid-tab[data-state="active"],
+  .nb-dark .liquid-tab[data-state="active"] {
+    background: hsl(var(--primary)) !important;
+    color: hsl(var(--primary-foreground)) !important;
+    box-shadow: 5px 5px 0 0 hsl(var(--accent)) !important;
+    transform: translate(-1px, -1px) !important;
+  }
+  .nb-light .liquid-tab[data-state="active"]::after,
+  .nb-dark .liquid-tab[data-state="active"]::after { display: none !important; }
+
+
   /* Neo-Brutalism Dark — hard edges, chunky borders, offset shadows, hot accent */
   .brutal {
     --background: 0 0% 6%;
