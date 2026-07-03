@@ -623,6 +623,12 @@
     -webkit-backdrop-filter: none !important;
     border: 3px solid hsl(var(--border)) !important;
     box-shadow: 8px 8px 0 0 hsl(var(--border)) !important;
+    transition: transform 0.3s ease, box-shadow 0.3s ease !important;
+  }
+  .brutal-paper .glass:hover,
+  .brutal-paper .liquid-glass:hover {
+    transform: translateY(-4px) !important;
+    box-shadow: 12px 12px 0 0 hsl(var(--border)) !important;
   }
   .brutal-paper .liquid-glass::before { display: none; }
 
