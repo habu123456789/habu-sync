@@ -929,6 +929,12 @@
     -webkit-backdrop-filter: none !important;
     border: 3px solid hsl(var(--border)) !important;
     box-shadow: 8px 8px 0 0 hsl(var(--border)) !important;
+    transition: transform 0.3s ease, box-shadow 0.3s ease !important;
+  }
+  .brutal .glass:hover,
+  .brutal .liquid-glass:hover {
+    transform: translateY(-4px) !important;
+    box-shadow: 12px 12px 0 0 hsl(var(--border)) !important;
   }
   .brutal .liquid-glass::before { display: none; }
 
@@ -939,19 +945,23 @@
     font-weight: 800 !important;
     text-transform: uppercase;
     letter-spacing: 0.04em;
-    transition: transform 0.12s ease, box-shadow 0.12s ease !important;
+    transition: transform 0.3s ease, box-shadow 0.3s ease !important;
     transform: none !important;
     box-shadow: 3px 3px 0 0 hsl(var(--border)) !important;
   }
   .brutal .liquid-tab:hover {
-    transform: translate(-2px, -2px) !important;
-    box-shadow: 5px 5px 0 0 hsl(var(--border)) !important;
+    transform: translateY(-4px) !important;
+    box-shadow: 6px 6px 0 0 hsl(var(--border)) !important;
   }
   .brutal .liquid-tab[data-state="active"] {
     background: hsl(var(--primary)) !important;
     color: hsl(var(--primary-foreground)) !important;
     box-shadow: 5px 5px 0 0 hsl(var(--accent)) !important;
     transform: translate(-1px, -1px) !important;
+  }
+  .brutal .liquid-tab[data-state="active"]:hover {
+    transform: translateY(-4px) !important;
+    box-shadow: 6px 6px 0 0 hsl(var(--accent)) !important;
   }
   .brutal .liquid-tab[data-state="active"]::after { display: none; }
 
