@@ -1180,18 +1180,27 @@
     -4px -4px 16px var(--clay-hi) !important;
 }
 
-.clay-light button, .clay-dark button {
+.clay-light button:not(.liquid-tab):not([data-tab-id]):not([role="tab"]),
+.clay-dark button:not(.liquid-tab):not([data-tab-id]):not([role="tab"]) {
   border-radius: 999px !important;
   border: none !important;
-  transition: transform 0.2s ease, box-shadow 0.2s ease !important;
+  transition: transform 0.3s ease, box-shadow 0.3s ease !important;
+  box-shadow:
+    inset 1px 1px 2px var(--clay-hi),
+    inset -1px -1px 3px var(--clay-lo),
+    5px 5px 16px var(--clay-out) !important;
 }
-.clay-light button:not(:disabled):hover,
-.clay-dark button:not(:disabled):hover {
-  transform: translateY(-2px);
+.clay-light button:not(.liquid-tab):not([data-tab-id]):not([role="tab"]):not(:disabled):hover,
+.clay-dark button:not(.liquid-tab):not([data-tab-id]):not([role="tab"]):not(:disabled):hover {
+  transform: translateY(-4px) !important;
+  box-shadow:
+    inset 1px 1px 2px var(--clay-hi),
+    inset -1px -1px 3px var(--clay-lo),
+    10px 16px 32px var(--clay-out) !important;
 }
-.clay-light button:not(:disabled):active,
-.clay-dark button:not(:disabled):active {
-  transform: translateY(1px);
+.clay-light button:not(.liquid-tab):not([data-tab-id]):not([role="tab"]):not(:disabled):active,
+.clay-dark button:not(.liquid-tab):not([data-tab-id]):not([role="tab"]):not(:disabled):active {
+  transform: translateY(1px) !important;
   box-shadow:
     inset 3px 3px 6px var(--clay-lo),
     inset -2px -2px 5px var(--clay-hi) !important;
@@ -1202,6 +1211,13 @@
     inset 1px 1px 3px var(--clay-hi),
     inset -2px -2px 4px var(--clay-lo),
     5px 5px 14px var(--clay-out) !important;
+}
+.clay-light .bg-primary:hover, .clay-dark .bg-primary:hover,
+.clay-light [class*="bg-primary/"]:hover, .clay-dark [class*="bg-primary/"]:hover {
+  box-shadow:
+    inset 1px 1px 3px var(--clay-hi),
+    inset -2px -2px 4px var(--clay-lo),
+    10px 14px 28px var(--clay-out) !important;
 }
 
 .clay-light input, .clay-dark input,
