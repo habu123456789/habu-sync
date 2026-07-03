@@ -623,6 +623,12 @@
     -webkit-backdrop-filter: none !important;
     border: 3px solid hsl(var(--border)) !important;
     box-shadow: 8px 8px 0 0 hsl(var(--border)) !important;
+    transition: transform 0.3s ease, box-shadow 0.3s ease !important;
+  }
+  .brutal-paper .glass:hover,
+  .brutal-paper .liquid-glass:hover {
+    transform: translateY(-4px) !important;
+    box-shadow: 12px 12px 0 0 hsl(var(--border)) !important;
   }
   .brutal-paper .liquid-glass::before { display: none; }
 
@@ -633,19 +639,23 @@
     font-weight: 800 !important;
     text-transform: uppercase;
     letter-spacing: 0.04em;
-    transition: transform 0.12s ease, box-shadow 0.12s ease !important;
+    transition: transform 0.3s ease, box-shadow 0.3s ease !important;
     transform: none !important;
     box-shadow: 3px 3px 0 0 hsl(var(--border)) !important;
   }
   .brutal-paper .liquid-tab:hover {
-    transform: translate(-2px, -2px) !important;
-    box-shadow: 5px 5px 0 0 hsl(var(--border)) !important;
+    transform: translateY(-4px) !important;
+    box-shadow: 6px 6px 0 0 hsl(var(--border)) !important;
   }
   .brutal-paper .liquid-tab[data-state="active"] {
     background: hsl(var(--accent)) !important;
     color: hsl(var(--accent-foreground)) !important;
     box-shadow: 5px 5px 0 0 hsl(var(--border)) !important;
     transform: translate(-1px, -1px) !important;
+  }
+  .brutal-paper .liquid-tab[data-state="active"]:hover {
+    transform: translateY(-4px) !important;
+    box-shadow: 6px 6px 0 0 hsl(var(--border)) !important;
   }
   .brutal-paper .liquid-tab[data-state="active"]::after { display: none; }
 
@@ -760,7 +770,7 @@
     border-radius: 0 !important;
     transition: background-color 0.3s ease, color 0.3s ease,
                 border-color 0.3s ease, box-shadow 0.3s ease,
-                transform 0.15s ease !important;
+                transform 0.3s ease !important;
   }
 
   /* Cards / glass surfaces */
@@ -774,6 +784,14 @@
     border: 4px solid #000 !important;
     box-shadow: 4px 4px 0 0 #000 !important;
     padding: 1.5rem;
+    transition: transform 0.3s ease, box-shadow 0.3s ease !important;
+  }
+  .nb-light .glass:hover, .nb-light .liquid-glass:hover,
+  .nb-dark .glass:hover, .nb-dark .liquid-glass:hover,
+  .nb-light [class*="rounded"][class*="border"]:hover,
+  .nb-dark [class*="rounded"][class*="border"]:hover {
+    transform: translateY(-4px) !important;
+    box-shadow: 8px 8px 0 0 #000 !important;
   }
   .nb-light .liquid-glass::before,
   .nb-dark .liquid-glass::before { display: none !important; }
@@ -788,9 +806,9 @@
     text-transform: uppercase;
     letter-spacing: 0.03em;
   }
-  .nb-light button:not(.liquid-tab):hover,
-  .nb-dark button:not(.liquid-tab):hover {
-    transform: translate(-2px, -2px);
+  .nb-light button:not(.liquid-tab):not(:disabled):hover,
+  .nb-dark button:not(.liquid-tab):not(:disabled):hover {
+    transform: translateY(-4px) !important;
     box-shadow: 6px 6px 0 0 #000 !important;
   }
   .nb-light button:not(.liquid-tab):active,
@@ -911,6 +929,12 @@
     -webkit-backdrop-filter: none !important;
     border: 3px solid hsl(var(--border)) !important;
     box-shadow: 8px 8px 0 0 hsl(var(--border)) !important;
+    transition: transform 0.3s ease, box-shadow 0.3s ease !important;
+  }
+  .brutal .glass:hover,
+  .brutal .liquid-glass:hover {
+    transform: translateY(-4px) !important;
+    box-shadow: 12px 12px 0 0 hsl(var(--border)) !important;
   }
   .brutal .liquid-glass::before { display: none; }
 
@@ -921,19 +945,23 @@
     font-weight: 800 !important;
     text-transform: uppercase;
     letter-spacing: 0.04em;
-    transition: transform 0.12s ease, box-shadow 0.12s ease !important;
+    transition: transform 0.3s ease, box-shadow 0.3s ease !important;
     transform: none !important;
     box-shadow: 3px 3px 0 0 hsl(var(--border)) !important;
   }
   .brutal .liquid-tab:hover {
-    transform: translate(-2px, -2px) !important;
-    box-shadow: 5px 5px 0 0 hsl(var(--border)) !important;
+    transform: translateY(-4px) !important;
+    box-shadow: 6px 6px 0 0 hsl(var(--border)) !important;
   }
   .brutal .liquid-tab[data-state="active"] {
     background: hsl(var(--primary)) !important;
     color: hsl(var(--primary-foreground)) !important;
     box-shadow: 5px 5px 0 0 hsl(var(--accent)) !important;
     transform: translate(-1px, -1px) !important;
+  }
+  .brutal .liquid-tab[data-state="active"]:hover {
+    transform: translateY(-4px) !important;
+    box-shadow: 6px 6px 0 0 hsl(var(--accent)) !important;
   }
   .brutal .liquid-tab[data-state="active"]::after { display: none; }
 
@@ -976,13 +1004,14 @@
   }
 
   .glass-hover {
-    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease, background-color 0.3s ease, border-color 0.3s ease !important;
   }
   .glass-hover:hover {
     background: hsl(var(--glass-bg) / 0.9);
     border-color: hsl(var(--glow-primary) / 0.4);
+    transform: translateY(-4px);
     box-shadow: 
-      0 0 30px -10px hsl(var(--glow-primary) / 0.15),
+      0 20px 40px -12px hsl(var(--glow-primary) / 0.2),
       inset 0 1px 0 hsl(40 25% 88% / 0.05);
   }
 
@@ -1078,6 +1107,34 @@
   }
 }
 
+/* ============================================================
+   Consistent hover lift for buttons & cards in all soft themes
+   (not applied to brutal/neo-brutal/clay, which define their own)
+   ============================================================ */
+html:not(.brutal):not(.brutal-paper):not(.nb-light):not(.nb-dark):not(.clay-light):not(.clay-dark) button:not(.liquid-tab):not([data-tab-id]):not([role="tab"]),
+html:not(.brutal):not(.brutal-paper):not(.nb-light):not(.nb-dark):not(.clay-light):not(.clay-dark) [role="button"]:not([role="tab"]) {
+  transition: transform 0.3s ease, filter 0.3s ease, background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease, opacity 0.3s ease !important;
+}
+
+html:not(.brutal):not(.brutal-paper):not(.nb-light):not(.nb-dark):not(.clay-light):not(.clay-dark) button:not(.liquid-tab):not([data-tab-id]):not([role="tab"]):not(:disabled):hover,
+html:not(.brutal):not(.brutal-paper):not(.nb-light):not(.nb-dark):not(.clay-light):not(.clay-dark) [role="button"]:not([role="tab"]):not(:disabled):hover {
+  transform: translateY(-4px) !important;
+  filter: drop-shadow(0 12px 24px hsl(var(--glow-primary) / 0.25)) !important;
+}
+
+html:not(.brutal):not(.brutal-paper):not(.nb-light):not(.nb-dark):not(.clay-light):not(.clay-dark) .glass,
+html:not(.brutal):not(.brutal-paper):not(.nb-light):not(.nb-dark):not(.clay-light):not(.clay-dark) .liquid-glass,
+html:not(.brutal):not(.brutal-paper):not(.nb-light):not(.nb-dark):not(.clay-light):not(.clay-dark) .bg-card {
+  transition: transform 0.3s ease, filter 0.3s ease, box-shadow 0.3s ease, background-color 0.3s ease, border-color 0.3s ease !important;
+}
+
+html:not(.brutal):not(.brutal-paper):not(.nb-light):not(.nb-dark):not(.clay-light):not(.clay-dark) .glass:hover,
+html:not(.brutal):not(.brutal-paper):not(.nb-light):not(.nb-dark):not(.clay-light):not(.clay-dark) .liquid-glass:hover,
+html:not(.brutal):not(.brutal-paper):not(.nb-light):not(.nb-dark):not(.clay-light):not(.clay-dark) .bg-card:hover {
+  transform: translateY(-4px) !important;
+  filter: drop-shadow(0 18px 36px hsl(var(--glow-primary) / 0.2)) !important;
+}
+
 /* ============ CLAYMORPHISM THEMES ============ */
 .clay-light {
   --background: 210 33% 96%;      /* #f0f4f8 */
@@ -1166,25 +1223,40 @@
     inset -3px -3px 7px var(--clay-lo),
     8px 8px 24px var(--clay-out),
     -4px -4px 16px var(--clay-hi) !important;
-  transition: transform 0.25s ease, box-shadow 0.25s ease !important;
+  transition: transform 0.3s ease, box-shadow 0.3s ease !important;
 }
 .clay-light .glass:hover, .clay-dark .glass:hover,
-.clay-light .liquid-glass:hover, .clay-dark .liquid-glass:hover {
-  transform: translateY(-4px);
+.clay-light .liquid-glass:hover, .clay-dark .liquid-glass:hover,
+.clay-light .bg-card:hover, .clay-dark .bg-card:hover {
+  transform: translateY(-4px) !important;
+  box-shadow:
+    inset 2px 2px 5px var(--clay-hi),
+    inset -3px -3px 7px var(--clay-lo),
+    14px 18px 36px var(--clay-out),
+    -4px -4px 16px var(--clay-hi) !important;
 }
 
-.clay-light button, .clay-dark button {
+.clay-light button:not(.liquid-tab):not([data-tab-id]):not([role="tab"]),
+.clay-dark button:not(.liquid-tab):not([data-tab-id]):not([role="tab"]) {
   border-radius: 999px !important;
   border: none !important;
-  transition: transform 0.2s ease, box-shadow 0.2s ease !important;
+  transition: transform 0.3s ease, box-shadow 0.3s ease !important;
+  box-shadow:
+    inset 1px 1px 2px var(--clay-hi),
+    inset -1px -1px 3px var(--clay-lo),
+    5px 5px 16px var(--clay-out) !important;
 }
-.clay-light button:not(:disabled):hover,
-.clay-dark button:not(:disabled):hover {
-  transform: translateY(-2px);
+.clay-light button:not(.liquid-tab):not([data-tab-id]):not([role="tab"]):not(:disabled):hover,
+.clay-dark button:not(.liquid-tab):not([data-tab-id]):not([role="tab"]):not(:disabled):hover {
+  transform: translateY(-4px) !important;
+  box-shadow:
+    inset 1px 1px 2px var(--clay-hi),
+    inset -1px -1px 3px var(--clay-lo),
+    10px 16px 32px var(--clay-out) !important;
 }
-.clay-light button:not(:disabled):active,
-.clay-dark button:not(:disabled):active {
-  transform: translateY(1px);
+.clay-light button:not(.liquid-tab):not([data-tab-id]):not([role="tab"]):not(:disabled):active,
+.clay-dark button:not(.liquid-tab):not([data-tab-id]):not([role="tab"]):not(:disabled):active {
+  transform: translateY(1px) !important;
   box-shadow:
     inset 3px 3px 6px var(--clay-lo),
     inset -2px -2px 5px var(--clay-hi) !important;
@@ -1195,6 +1267,13 @@
     inset 1px 1px 3px var(--clay-hi),
     inset -2px -2px 4px var(--clay-lo),
     5px 5px 14px var(--clay-out) !important;
+}
+.clay-light .bg-primary:hover, .clay-dark .bg-primary:hover,
+.clay-light [class*="bg-primary/"]:hover, .clay-dark [class*="bg-primary/"]:hover {
+  box-shadow:
+    inset 1px 1px 3px var(--clay-hi),
+    inset -2px -2px 4px var(--clay-lo),
+    10px 14px 28px var(--clay-out) !important;
 }
 
 .clay-light input, .clay-dark input,
