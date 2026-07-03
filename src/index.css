@@ -633,19 +633,23 @@
     font-weight: 800 !important;
     text-transform: uppercase;
     letter-spacing: 0.04em;
-    transition: transform 0.12s ease, box-shadow 0.12s ease !important;
+    transition: transform 0.3s ease, box-shadow 0.3s ease !important;
     transform: none !important;
     box-shadow: 3px 3px 0 0 hsl(var(--border)) !important;
   }
   .brutal-paper .liquid-tab:hover {
-    transform: translate(-2px, -2px) !important;
-    box-shadow: 5px 5px 0 0 hsl(var(--border)) !important;
+    transform: translateY(-4px) !important;
+    box-shadow: 6px 6px 0 0 hsl(var(--border)) !important;
   }
   .brutal-paper .liquid-tab[data-state="active"] {
     background: hsl(var(--accent)) !important;
     color: hsl(var(--accent-foreground)) !important;
     box-shadow: 5px 5px 0 0 hsl(var(--border)) !important;
     transform: translate(-1px, -1px) !important;
+  }
+  .brutal-paper .liquid-tab[data-state="active"]:hover {
+    transform: translateY(-4px) !important;
+    box-shadow: 6px 6px 0 0 hsl(var(--border)) !important;
   }
   .brutal-paper .liquid-tab[data-state="active"]::after { display: none; }
 
