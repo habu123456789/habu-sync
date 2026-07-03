@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;500;600;700&family=Quicksand:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;500;600;700&family=Quicksand:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700;800&family=Poppins:wght@500;600;700;800&family=Nunito:wght@400;500;600;700;800&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -1076,4 +1076,161 @@
     0%,100% { transform: translateX(-50%) translateY(0) scale(1); opacity: 0.9; }
     50% { transform: translateX(-50%) translateY(5px) scale(1.25); opacity: 1; }
   }
+}
+
+/* ============ CLAYMORPHISM THEMES ============ */
+.clay-light {
+  --background: 210 33% 96%;      /* #f0f4f8 */
+  --foreground: 200 10% 20%;      /* #2d3436 */
+  --card: 0 0% 100%;
+  --card-foreground: 200 10% 20%;
+  --popover: 0 0% 100%;
+  --popover-foreground: 200 10% 20%;
+  --primary: 250 74% 63%;         /* #6c5ce7 */
+  --primary-foreground: 0 0% 100%;
+  --secondary: 330 96% 74%;       /* #fd79a8 */
+  --secondary-foreground: 0 0% 100%;
+  --muted: 210 25% 90%;
+  --muted-foreground: 200 10% 40%;
+  --accent: 165 100% 36%;         /* #00b894 */
+  --accent-foreground: 0 0% 100%;
+  --destructive: 0 72% 55%;
+  --destructive-foreground: 0 0% 100%;
+  --border: 210 25% 88%;
+  --input: 210 25% 92%;
+  --ring: 250 74% 63%;
+  --radius: 1.5rem;
+  --glass-bg: 0 0% 100%;
+  --glass-border: 210 25% 90%;
+  --glow-primary: 250 74% 63%;
+  --glow-accent: 165 100% 36%;
+
+  --clay-hi: rgba(255,255,255,0.8);
+  --clay-lo: rgba(0,0,0,0.10);
+  --clay-out: rgba(0,0,0,0.15);
+  --font-sans: 'Nunito', 'Poppins', 'Inter', sans-serif;
+}
+
+.clay-dark {
+  --background: 232 47% 14%;      /* #1a1a2e */
+  --foreground: 0 0% 92%;         /* #eaeaea */
+  --card: 219 52% 17%;            /* #16213e */
+  --card-foreground: 0 0% 92%;
+  --popover: 219 52% 17%;
+  --popover-foreground: 0 0% 92%;
+  --primary: 216 62% 22%;         /* #0f3460 */
+  --primary-foreground: 0 0% 100%;
+  --secondary: 265 45% 36%;       /* #533483 */
+  --secondary-foreground: 0 0% 100%;
+  --muted: 219 40% 22%;
+  --muted-foreground: 220 15% 70%;
+  --accent: 348 79% 60%;          /* #e94560 */
+  --accent-foreground: 0 0% 100%;
+  --destructive: 0 72% 55%;
+  --destructive-foreground: 0 0% 100%;
+  --border: 219 40% 25%;
+  --input: 219 40% 22%;
+  --ring: 348 79% 60%;
+  --radius: 1.5rem;
+  --glass-bg: 219 52% 17%;
+  --glass-border: 219 40% 28%;
+  --glow-primary: 348 79% 60%;
+  --glow-accent: 265 45% 46%;
+
+  --clay-hi: rgba(255,255,255,0.05);
+  --clay-lo: rgba(0,0,0,0.40);
+  --clay-out: rgba(0,0,0,0.30);
+  --font-sans: 'Nunito', 'Poppins', 'Inter', sans-serif;
+}
+
+.clay-light body, .clay-dark body {
+  font-family: 'Nunito', 'Inter', system-ui, sans-serif;
+}
+.clay-light h1, .clay-light h2, .clay-light h3, .clay-light h4,
+.clay-dark h1, .clay-dark h2, .clay-dark h3, .clay-dark h4 {
+  font-family: 'Poppins', 'Nunito', sans-serif;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+
+/* Clay effect applied to cards, buttons, inputs, badges, tabs */
+.clay-light .glass, .clay-dark .glass,
+.clay-light .liquid-glass, .clay-dark .liquid-glass,
+.clay-light [class*="rounded-lg"].border, .clay-dark [class*="rounded-lg"].border,
+.clay-light .bg-card, .clay-dark .bg-card {
+  background: hsl(var(--card)) !important;
+  border: none !important;
+  border-radius: 28px !important;
+  box-shadow:
+    inset 2px 2px 5px var(--clay-hi),
+    inset -3px -3px 7px var(--clay-lo),
+    8px 8px 24px var(--clay-out),
+    -4px -4px 16px var(--clay-hi) !important;
+  transition: transform 0.25s ease, box-shadow 0.25s ease !important;
+}
+.clay-light .glass:hover, .clay-dark .glass:hover,
+.clay-light .liquid-glass:hover, .clay-dark .liquid-glass:hover {
+  transform: translateY(-4px);
+}
+
+.clay-light button, .clay-dark button {
+  border-radius: 999px !important;
+  border: none !important;
+  transition: transform 0.2s ease, box-shadow 0.2s ease !important;
+}
+.clay-light button:not(:disabled):hover,
+.clay-dark button:not(:disabled):hover {
+  transform: translateY(-2px);
+}
+.clay-light button:not(:disabled):active,
+.clay-dark button:not(:disabled):active {
+  transform: translateY(1px);
+  box-shadow:
+    inset 3px 3px 6px var(--clay-lo),
+    inset -2px -2px 5px var(--clay-hi) !important;
+}
+.clay-light .bg-primary, .clay-dark .bg-primary,
+.clay-light [class*="bg-primary/"], .clay-dark [class*="bg-primary/"] {
+  box-shadow:
+    inset 1px 1px 3px var(--clay-hi),
+    inset -2px -2px 4px var(--clay-lo),
+    5px 5px 14px var(--clay-out) !important;
+}
+
+.clay-light input, .clay-dark input,
+.clay-light textarea, .clay-dark textarea,
+.clay-light select, .clay-dark select {
+  border-radius: 24px !important;
+  border: none !important;
+  background: hsl(var(--input)) !important;
+  box-shadow:
+    inset 3px 3px 6px var(--clay-lo),
+    inset -3px -3px 6px var(--clay-hi) !important;
+  transition: box-shadow 0.25s ease !important;
+}
+.clay-light input:focus, .clay-dark input:focus,
+.clay-light textarea:focus, .clay-dark textarea:focus {
+  outline: none !important;
+  box-shadow:
+    inset 3px 3px 6px var(--clay-lo),
+    inset -3px -3px 6px var(--clay-hi),
+    0 0 0 3px hsl(var(--accent) / 0.4) !important;
+}
+
+.clay-light [class*="rounded-full"][class*="bg-"],
+.clay-dark [class*="rounded-full"][class*="bg-"] {
+  box-shadow:
+    inset 1px 1px 2px var(--clay-hi),
+    inset -1px -1px 3px var(--clay-lo),
+    3px 3px 8px var(--clay-out) !important;
+}
+
+.clay-light .liquid-tab[data-state="active"],
+.clay-dark .liquid-tab[data-state="active"] {
+  background: linear-gradient(135deg, hsl(var(--accent)), hsl(var(--secondary))) !important;
+  color: hsl(var(--accent-foreground)) !important;
+  box-shadow:
+    inset 1px 1px 3px var(--clay-hi),
+    inset -2px -2px 4px var(--clay-lo),
+    6px 6px 16px var(--clay-out) !important;
 }
