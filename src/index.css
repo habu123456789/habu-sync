@@ -774,6 +774,14 @@
     border: 4px solid #000 !important;
     box-shadow: 4px 4px 0 0 #000 !important;
     padding: 1.5rem;
+    transition: transform 0.3s ease, box-shadow 0.3s ease !important;
+  }
+  .nb-light .glass:hover, .nb-light .liquid-glass:hover,
+  .nb-dark .glass:hover, .nb-dark .liquid-glass:hover,
+  .nb-light [class*="rounded"][class*="border"]:hover,
+  .nb-dark [class*="rounded"][class*="border"]:hover {
+    transform: translateY(-4px) !important;
+    box-shadow: 8px 8px 0 0 #000 !important;
   }
   .nb-light .liquid-glass::before,
   .nb-dark .liquid-glass::before { display: none !important; }
