@@ -8,25 +8,8 @@ import { flushNaamJapBeforeLogout } from '@/lib/naam-jap-sync';
 
 
 const themeOptions = [
-  { value: 'liquid', label: 'Liquid 💧' },
-  { value: 'liquid-dark', label: 'Liquid Dark' },
-  { value: 'light', label: 'Rose' },
-  { value: 'sunrise', label: 'Yellow' },
-  { value: 'ocean', label: 'Blue' },
-  { value: 'bhagwa', label: 'Bhagwa' },
-  { value: 'krishna', label: 'Krishna' },
-  { value: 'forest', label: 'Forest' },
-  { value: 'lotus', label: 'Lotus' },
-  { value: 'brutal', label: 'Brutal 🖤' },
-  { value: 'brutal-paper', label: 'Brutal Paper 📜' },
-  { value: 'nb-light', label: 'NB Light ☀️' },
-  { value: 'nb-dark', label: 'NB Dark 🌙' },
-  { value: 'clay-light', label: 'Clay ☀️' },
-  { value: 'clay-dark', label: 'Clay 🌙' },
   { value: 'minimal-light', label: 'Minimal ☀️' },
   { value: 'minimal-dark', label: 'Minimal 🌙' },
-  { value: 'dark', label: 'Dark' },
-
 ] as const;
 
 const Navbar = () => {
