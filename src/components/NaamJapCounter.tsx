@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 import { toast } from 'sonner';
-import { Plus, Sparkles, Flame, CalendarDays, Eye, EyeOff, Target, Save, Settings2, Trash2 } from 'lucide-react';
+import { Plus, Sparkles, Flame, CalendarDays, Eye, EyeOff, Target, Save, Settings2, Trash2, Link2 } from 'lucide-react';
 import { format, subDays, differenceInCalendarDays } from 'date-fns';
 import {
   AlertDialog,
@@ -78,6 +78,8 @@ const NaamJapCounter = () => {
   const [hideCounts, setHideCounts] = useState(false);
   const [editingTarget, setEditingTarget] = useState<string | null>(null);
   const [targetInput, setTargetInput] = useState('');
+  const [externalInputs, setExternalInputs] = useState<Record<string, string>>({});
+  const [externalToday, setExternalToday] = useState<Record<string, number>>({});
   const [isSaving, setIsSaving] = useState(false);
   const [hasPendingChanges, setHasPendingChanges] = useState(false);
   const [lastSavedAt, setLastSavedAt] = useState<Date | null>(null);
@@ -420,26 +422,65 @@ const NaamJapCounter = () => {
     }
   };
 
-  const handleJap = (item: JapCount) => {
-    if (!user) return;
+  const addJapDelta = (item: JapCount, delta: number, external = false) => {
+    if (!user || delta <= 0) return;
 
     setCounts((prev) => prev.map((count) => (
-      count.id === item.id ? { ...count, count: count.count + 1 } : count
+      count.id === item.id ? { ...count, count: count.count + delta } : count
     )));
 
     pendingCountDeltasRef.current = {
       ...pendingCountDeltasRef.current,
-      [item.id]: (pendingCountDeltasRef.current[item.id] || 0) + 1,
+      [item.id]: (pendingCountDeltasRef.current[item.id] || 0) + delta,
     };
     pendingDailyLogDeltasRef.current = {
       ...pendingDailyLogDeltasRef.current,
-      [todayStr]: (pendingDailyLogDeltasRef.current[todayStr] || 0) + 1,
+      [todayStr]: (pendingDailyLogDeltasRef.current[todayStr] || 0) + delta,
     };
 
     persistPendingChanges();
-    incrementDailyLogLocally(todayStr);
+    incrementDailyLogLocally(todayStr, delta);
     scheduleAutoSave();
+
+    if (external) {
+      const key = `external-jap:${user.id}:${item.id}:${todayStr}`;
+      const next = (externalToday[item.id] || 0) + delta;
+      setExternalToday((prev) => ({ ...prev, [item.id]: next }));
+      try { window.localStorage.setItem(key, String(next)); } catch { /* ignore */ }
+    }
   };
+
+  const handleJap = (item: JapCount) => addJapDelta(item, 1, false);
+
+  const handleAddExternal = (item: JapCount) => {
+    const raw = (externalInputs[item.id] || '').trim();
+    const n = parseInt(raw, 10);
+    if (!Number.isFinite(n) || n <= 0) {
+      toast.error('Sahi number daalo (1 ya usse zyada)');
+      return;
+    }
+    if (n > 100000) {
+      toast.error('Ek baar mein 1,00,000 se zyada nahi');
+      return;
+    }
+    addJapDelta(item, n, true);
+    setExternalInputs((prev) => ({ ...prev, [item.id]: '' }));
+    toast.success(`+${n} jap bahar se joda gaya 🧿`);
+  };
+
+  // Load today's external tallies from localStorage when counters load
+  useEffect(() => {
+    if (!user) return;
+    const next: Record<string, number> = {};
+    for (const c of counts) {
+      try {
+        const v = window.localStorage.getItem(`external-jap:${user.id}:${c.id}:${todayStr}`);
+        if (v) next[c.id] = parseInt(v, 10) || 0;
+      } catch { /* ignore */ }
+    }
+    setExternalToday(next);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user, counts.length, todayStr]);
 
   // Listen for global "tap-anywhere" jap events from TapJapOverlay.
   // Increments the first (top) counter so the user can jap without aiming.
@@ -718,6 +759,12 @@ const NaamJapCounter = () => {
                       transition={{ duration: 0.5 }}
                     />
                   </div>
+                  {!hideCounts && (externalToday[item.id] || 0) > 0 && (
+                    <p className="mt-2 text-[10px] font-mono text-muted-foreground flex items-center gap-1.5">
+                      <Link2 className="w-3 h-3" />
+                      Aaj bahar se joda gaya: <span className="text-foreground font-semibold">{externalToday[item.id]}</span>
+                    </p>
+                  )}
                 </div>
 
                 <AnimatePresence>
@@ -729,22 +776,49 @@ const NaamJapCounter = () => {
                       className="overflow-hidden mt-3"
                     >
                       <div className="glass rounded-xl p-3 space-y-3">
-                        <div className="flex gap-2">
-                          <input
-                            type="number"
-                            value={targetInput}
-                            onChange={(e) => setTargetInput(e.target.value)}
-                            onKeyDown={(e) => e.key === 'Enter' && handleSetTarget(item)}
-                            placeholder="Target set karo..."
-                            min={1}
-                            className="flex-1 px-3 py-2 rounded-lg bg-secondary border border-border text-foreground text-sm focus:outline-none focus:border-primary/50"
-                          />
-                          <button
-                            onClick={() => handleSetTarget(item)}
-                            className="px-3 py-2 rounded-lg bg-primary text-primary-foreground text-sm font-semibold"
-                          >
-                            Set 🎯
-                          </button>
+                        <div>
+                          <p className="text-[10px] font-mono text-muted-foreground mb-1.5 flex items-center gap-1.5">
+                            <Link2 className="w-3 h-3" />
+                            Bahar se jap joda (physical jap device / mala)
+                          </p>
+                          <div className="flex gap-2">
+                            <input
+                              type="number"
+                              value={externalInputs[item.id] || ''}
+                              onChange={(e) => setExternalInputs((prev) => ({ ...prev, [item.id]: e.target.value }))}
+                              onKeyDown={(e) => e.key === 'Enter' && handleAddExternal(item)}
+                              placeholder="Kitne jap? (e.g. 108)"
+                              min={1}
+                              className="flex-1 px-3 py-2 rounded-lg bg-secondary border border-border text-foreground text-sm focus:outline-none focus:border-primary/50"
+                            />
+                            <button
+                              onClick={() => handleAddExternal(item)}
+                              className="px-3 py-2 rounded-lg bg-primary text-primary-foreground text-sm font-semibold"
+                            >
+                              Jodo
+                            </button>
+                          </div>
+                        </div>
+
+                        <div>
+                          <p className="text-[10px] font-mono text-muted-foreground mb-1.5">Daily target</p>
+                          <div className="flex gap-2">
+                            <input
+                              type="number"
+                              value={targetInput}
+                              onChange={(e) => setTargetInput(e.target.value)}
+                              onKeyDown={(e) => e.key === 'Enter' && handleSetTarget(item)}
+                              placeholder="Target set karo..."
+                              min={1}
+                              className="flex-1 px-3 py-2 rounded-lg bg-secondary border border-border text-foreground text-sm focus:outline-none focus:border-primary/50"
+                            />
+                            <button
+                              onClick={() => handleSetTarget(item)}
+                              className="px-3 py-2 rounded-lg bg-primary text-primary-foreground text-sm font-semibold"
+                            >
+                              Set 🎯
+                            </button>
+                          </div>
                         </div>
 
                         <div className="flex justify-end">
