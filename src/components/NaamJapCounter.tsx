@@ -759,6 +759,12 @@ const NaamJapCounter = () => {
                       transition={{ duration: 0.5 }}
                     />
                   </div>
+                  {!hideCounts && (externalToday[item.id] || 0) > 0 && (
+                    <p className="mt-2 text-[10px] font-mono text-muted-foreground flex items-center gap-1.5">
+                      <Link2 className="w-3 h-3" />
+                      Aaj bahar se joda gaya: <span className="text-foreground font-semibold">{externalToday[item.id]}</span>
+                    </p>
+                  )}
                 </div>
 
                 <AnimatePresence>
@@ -770,22 +776,49 @@ const NaamJapCounter = () => {
                       className="overflow-hidden mt-3"
                     >
                       <div className="glass rounded-xl p-3 space-y-3">
-                        <div className="flex gap-2">
-                          <input
-                            type="number"
-                            value={targetInput}
-                            onChange={(e) => setTargetInput(e.target.value)}
-                            onKeyDown={(e) => e.key === 'Enter' && handleSetTarget(item)}
-                            placeholder="Target set karo..."
-                            min={1}
-                            className="flex-1 px-3 py-2 rounded-lg bg-secondary border border-border text-foreground text-sm focus:outline-none focus:border-primary/50"
-                          />
-                          <button
-                            onClick={() => handleSetTarget(item)}
-                            className="px-3 py-2 rounded-lg bg-primary text-primary-foreground text-sm font-semibold"
-                          >
-                            Set 🎯
-                          </button>
+                        <div>
+                          <p className="text-[10px] font-mono text-muted-foreground mb-1.5 flex items-center gap-1.5">
+                            <Link2 className="w-3 h-3" />
+                            Bahar se jap joda (physical jap device / mala)
+                          </p>
+                          <div className="flex gap-2">
+                            <input
+                              type="number"
+                              value={externalInputs[item.id] || ''}
+                              onChange={(e) => setExternalInputs((prev) => ({ ...prev, [item.id]: e.target.value }))}
+                              onKeyDown={(e) => e.key === 'Enter' && handleAddExternal(item)}
+                              placeholder="Kitne jap? (e.g. 108)"
+                              min={1}
+                              className="flex-1 px-3 py-2 rounded-lg bg-secondary border border-border text-foreground text-sm focus:outline-none focus:border-primary/50"
+                            />
+                            <button
+                              onClick={() => handleAddExternal(item)}
+                              className="px-3 py-2 rounded-lg bg-primary text-primary-foreground text-sm font-semibold"
+                            >
+                              Jodo
+                            </button>
+                          </div>
+                        </div>
+
+                        <div>
+                          <p className="text-[10px] font-mono text-muted-foreground mb-1.5">Daily target</p>
+                          <div className="flex gap-2">
+                            <input
+                              type="number"
+                              value={targetInput}
+                              onChange={(e) => setTargetInput(e.target.value)}
+                              onKeyDown={(e) => e.key === 'Enter' && handleSetTarget(item)}
+                              placeholder="Target set karo..."
+                              min={1}
+                              className="flex-1 px-3 py-2 rounded-lg bg-secondary border border-border text-foreground text-sm focus:outline-none focus:border-primary/50"
+                            />
+                            <button
+                              onClick={() => handleSetTarget(item)}
+                              className="px-3 py-2 rounded-lg bg-primary text-primary-foreground text-sm font-semibold"
+                            >
+                              Set 🎯
+                            </button>
+                          </div>
                         </div>
 
                         <div className="flex justify-end">
