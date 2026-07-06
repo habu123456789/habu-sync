@@ -422,26 +422,65 @@ const NaamJapCounter = () => {
     }
   };
 
-  const handleJap = (item: JapCount) => {
-    if (!user) return;
+  const addJapDelta = (item: JapCount, delta: number, external = false) => {
+    if (!user || delta <= 0) return;
 
     setCounts((prev) => prev.map((count) => (
-      count.id === item.id ? { ...count, count: count.count + 1 } : count
+      count.id === item.id ? { ...count, count: count.count + delta } : count
     )));
 
     pendingCountDeltasRef.current = {
       ...pendingCountDeltasRef.current,
-      [item.id]: (pendingCountDeltasRef.current[item.id] || 0) + 1,
+      [item.id]: (pendingCountDeltasRef.current[item.id] || 0) + delta,
     };
     pendingDailyLogDeltasRef.current = {
       ...pendingDailyLogDeltasRef.current,
-      [todayStr]: (pendingDailyLogDeltasRef.current[todayStr] || 0) + 1,
+      [todayStr]: (pendingDailyLogDeltasRef.current[todayStr] || 0) + delta,
     };
 
     persistPendingChanges();
-    incrementDailyLogLocally(todayStr);
+    incrementDailyLogLocally(todayStr, delta);
     scheduleAutoSave();
+
+    if (external) {
+      const key = `external-jap:${user.id}:${item.id}:${todayStr}`;
+      const next = (externalToday[item.id] || 0) + delta;
+      setExternalToday((prev) => ({ ...prev, [item.id]: next }));
+      try { window.localStorage.setItem(key, String(next)); } catch { /* ignore */ }
+    }
   };
+
+  const handleJap = (item: JapCount) => addJapDelta(item, 1, false);
+
+  const handleAddExternal = (item: JapCount) => {
+    const raw = (externalInputs[item.id] || '').trim();
+    const n = parseInt(raw, 10);
+    if (!Number.isFinite(n) || n <= 0) {
+      toast.error('Sahi number daalo (1 ya usse zyada)');
+      return;
+    }
+    if (n > 100000) {
+      toast.error('Ek baar mein 1,00,000 se zyada nahi');
+      return;
+    }
+    addJapDelta(item, n, true);
+    setExternalInputs((prev) => ({ ...prev, [item.id]: '' }));
+    toast.success(`+${n} jap bahar se joda gaya 🧿`);
+  };
+
+  // Load today's external tallies from localStorage when counters load
+  useEffect(() => {
+    if (!user) return;
+    const next: Record<string, number> = {};
+    for (const c of counts) {
+      try {
+        const v = window.localStorage.getItem(`external-jap:${user.id}:${c.id}:${todayStr}`);
+        if (v) next[c.id] = parseInt(v, 10) || 0;
+      } catch { /* ignore */ }
+    }
+    setExternalToday(next);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user, counts.length, todayStr]);
 
   // Listen for global "tap-anywhere" jap events from TapJapOverlay.
   // Increments the first (top) counter so the user can jap without aiming.
