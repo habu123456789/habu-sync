@@ -78,6 +78,8 @@ const NaamJapCounter = () => {
   const [hideCounts, setHideCounts] = useState(false);
   const [editingTarget, setEditingTarget] = useState<string | null>(null);
   const [targetInput, setTargetInput] = useState('');
+  const [externalInputs, setExternalInputs] = useState<Record<string, string>>({});
+  const [externalToday, setExternalToday] = useState<Record<string, number>>({});
   const [isSaving, setIsSaving] = useState(false);
   const [hasPendingChanges, setHasPendingChanges] = useState(false);
   const [lastSavedAt, setLastSavedAt] = useState<Date | null>(null);
