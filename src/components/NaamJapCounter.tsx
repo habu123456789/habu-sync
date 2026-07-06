@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 import { toast } from 'sonner';
-import { Plus, Sparkles, Flame, CalendarDays, Eye, EyeOff, Target, Save, Settings2, Trash2 } from 'lucide-react';
+import { Plus, Sparkles, Flame, CalendarDays, Eye, EyeOff, Target, Save, Settings2, Trash2, Link2 } from 'lucide-react';
 import { format, subDays, differenceInCalendarDays } from 'date-fns';
 import {
   AlertDialog,
