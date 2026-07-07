@@ -82,54 +82,50 @@ const Index = () => {
         {/* Live Date / Day / Time / Festival strip */}
         <DateTimeStrip />
 
-        {/* Tabbed sections — landscape liquid-glass with goo filter */}
+        {/* Tabbed sections — minimalist card tabs */}
         <section className="max-w-6xl mx-auto px-4 mb-16 relative">
-          {/* SVG goo filter for water-drop merge effect */}
-          <svg className="absolute w-0 h-0" aria-hidden="true">
-            <defs>
-              <filter id="liquid-goo">
-                <feGaussianBlur in="SourceGraphic" stdDeviation="6" result="blur" />
-                <feColorMatrix in="blur" mode="matrix"
-                  values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 22 -10" result="goo" />
-                <feComposite in="SourceGraphic" in2="goo" operator="atop" />
-              </filter>
-            </defs>
-          </svg>
-
-          {/* Floating ambient water drops */}
-          <div className="pointer-events-none absolute inset-0 overflow-hidden -z-10">
-            <div className="absolute top-10 left-[8%] w-24 h-24 rounded-full bg-gradient-to-br from-primary/20 to-accent/10 blur-2xl animate-float" />
-            <div className="absolute top-32 right-[10%] w-32 h-32 rounded-full bg-gradient-to-br from-accent/20 to-primary/10 blur-3xl animate-float" style={{ animationDelay: '2s' }} />
-            <div className="absolute bottom-10 left-[40%] w-28 h-28 rounded-full bg-gradient-to-tr from-primary/15 to-accent/15 blur-2xl animate-float" style={{ animationDelay: '4s' }} />
-          </div>
-
           <Tabs value={active} onValueChange={setActive} className="w-full">
-            {/* Horizontal liquid-glass tab bar — swipeable / snap-scroll on mobile */}
-            <div className="flex justify-center mb-10">
+            {/* Desktop: grid of labelled cards. Mobile: horizontal snap-scroll pills */}
+            <div className="mb-8">
+              {/* Mobile scrollable pills */}
               <div
                 ref={tabBarRef}
-                className="liquid-glass rounded-full p-2 shadow-2xl max-w-full overflow-x-auto scrollbar-none snap-x snap-mandatory touch-pan-x overscroll-x-contain"
+                className="md:hidden -mx-4 px-4 overflow-x-auto scrollbar-none snap-x snap-mandatory touch-pan-x overscroll-x-contain"
                 style={{ WebkitOverflowScrolling: 'touch' }}
               >
-                <TabsList
-                  className="flex h-auto bg-transparent p-1 gap-1 flex-nowrap"
-                  style={{ filter: 'url(#liquid-goo)' }}
-                >
+                <TabsList className="inline-flex h-auto bg-transparent p-0 gap-2 flex-nowrap">
                   {tabs.map(({ id, label, icon: Icon }) => (
                     <TabsTrigger
                       key={id}
                       value={id}
                       data-tab-id={id}
-                      className="liquid-tab snap-center flex-row items-center gap-2 px-4 md:px-5 py-2.5 rounded-full text-sm md:text-base font-display whitespace-nowrap
-                        text-foreground/70 hover:text-foreground bg-card/30 border-0
-                        data-[state=active]:shadow-none"
+                      className="liquid-tab snap-center inline-flex flex-row items-center gap-2 px-4 py-2.5 rounded-full text-sm font-medium whitespace-nowrap
+                        border border-border bg-card text-foreground/70 hover:text-foreground
+                        data-[state=active]:bg-foreground data-[state=active]:text-background data-[state=active]:border-foreground"
                     >
-                      <Icon className="w-4 h-4 md:w-5 md:h-5 shrink-0" />
+                      <Icon className="w-4 h-4 shrink-0" />
                       <span>{label}</span>
                     </TabsTrigger>
                   ))}
                 </TabsList>
               </div>
+
+              {/* Desktop grid of cards */}
+              <TabsList className="hidden md:grid grid-cols-6 h-auto bg-transparent p-0 gap-3 w-full">
+                {tabs.map(({ id, label, icon: Icon }) => (
+                  <TabsTrigger
+                    key={id}
+                    value={id}
+                    data-tab-id={id}
+                    className="liquid-tab flex flex-col items-center justify-center gap-2 px-4 py-5 rounded-2xl text-sm font-medium
+                      border border-border bg-card text-foreground/70 hover:text-foreground transition-all
+                      data-[state=active]:bg-foreground data-[state=active]:text-background data-[state=active]:border-foreground"
+                  >
+                    <Icon className="w-6 h-6 shrink-0" />
+                    <span>{label}</span>
+                  </TabsTrigger>
+                ))}
+              </TabsList>
             </div>
 
             {/* Swipe hint for mobile */}
@@ -139,7 +135,7 @@ const Index = () => {
 
             {/* Tab content — swipeable on touch */}
             <div
-              className="liquid-glass rounded-3xl p-6 md:p-10 min-h-[400px] shadow-2xl touch-pan-y"
+              className="rounded-3xl border border-border bg-card p-6 md:p-10 min-h-[400px] touch-pan-y transition-all"
               onTouchStart={onTouchStart}
               onTouchEnd={onTouchEnd}
             >
