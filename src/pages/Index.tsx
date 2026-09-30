@@ -99,7 +99,7 @@ const Index = () => {
 
         {/* Tabbed sections — minimalist card tabs */}
         <section className="max-w-6xl mx-auto px-4 mb-16 relative">
-          <Tabs value={active} onValueChange={setActive} className="w-full">
+          <Tabs value={active} onValueChange={handleTabChange} className="w-full">
             {/* Desktop: grid of labelled cards. Mobile: horizontal snap-scroll pills */}
             <div className="mb-8">
               {/* Mobile scrollable pills */}
