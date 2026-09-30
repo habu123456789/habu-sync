@@ -39,9 +39,24 @@ const Index = () => {
   ];
 
   const [active, setActive] = useState('jap');
+  const [isSwitching, setIsSwitching] = useState(false);
+  const switchTimer = useRef<number | null>(null);
   const tabBarRef = useRef<HTMLDivElement>(null);
   const touchStartX = useRef<number | null>(null);
   const touchStartY = useRef<number | null>(null);
+
+  // Lightweight loading state on tab change (content dims, dots pulse, then fades in)
+  useEffect(() => () => {
+    if (switchTimer.current) window.clearTimeout(switchTimer.current);
+  }, []);
+
+  const handleTabChange = (value: string) => {
+    if (value === active) return;
+    setActive(value);
+    setIsSwitching(true);
+    if (switchTimer.current) window.clearTimeout(switchTimer.current);
+    switchTimer.current = window.setTimeout(() => setIsSwitching(false), 240);
+  };
 
   // Auto-scroll active pill into view (mobile horizontal scroll)
   useEffect(() => {
@@ -63,8 +78,8 @@ const Index = () => {
     // Only horizontal swipes, ignore vertical scrolls
     if (Math.abs(dx) < 60 || Math.abs(dy) > Math.abs(dx)) return;
     const idx = tabs.findIndex((t) => t.id === active);
-    if (dx < 0 && idx < tabs.length - 1) setActive(tabs[idx + 1].id);
-    if (dx > 0 && idx > 0) setActive(tabs[idx - 1].id);
+    if (dx < 0 && idx < tabs.length - 1) handleTabChange(tabs[idx + 1].id);
+    if (dx > 0 && idx > 0) handleTabChange(tabs[idx - 1].id);
   };
 
   return (
@@ -84,7 +99,7 @@ const Index = () => {
 
         {/* Tabbed sections — minimalist card tabs */}
         <section className="max-w-6xl mx-auto px-4 mb-16 relative">
-          <Tabs value={active} onValueChange={setActive} className="w-full">
+          <Tabs value={active} onValueChange={handleTabChange} className="w-full">
             {/* Desktop: grid of labelled cards. Mobile: horizontal snap-scroll pills */}
             <div className="mb-8">
               {/* Mobile scrollable pills */}
@@ -133,30 +148,50 @@ const Index = () => {
               ← swipe karke tabs change karo →
             </p>
 
-            {/* Tab content — swipeable on touch */}
+            {/* Tab content — swipeable on touch, with lightweight loading transition */}
             <div
-              className="rounded-3xl border border-border bg-card p-6 md:p-10 min-h-[400px] touch-pan-y transition-all"
+              className="relative rounded-3xl border border-border bg-card p-6 md:p-10 min-h-[400px] touch-pan-y transition-all overflow-hidden"
               onTouchStart={onTouchStart}
               onTouchEnd={onTouchEnd}
             >
-              <TabsContent value="jap" className="focus-visible:outline-none mt-0 animate-fade-in">
-                <NaamJapCounter />
-              </TabsContent>
-              <TabsContent value="panchang" className="focus-visible:outline-none mt-0 animate-fade-in">
-                <HinduPanchang />
-              </TabsContent>
-              <TabsContent value="mantra" className="focus-visible:outline-none mt-0 animate-fade-in">
-                <MantraOfTheDay />
-              </TabsContent>
-              <TabsContent value="gita" className="focus-visible:outline-none mt-0 animate-fade-in">
-                <DailyGitaShlok />
-              </TabsContent>
-              <TabsContent value="chalisa" className="focus-visible:outline-none mt-0 animate-fade-in">
-                <HanumanChalisa />
-              </TabsContent>
-              <TabsContent value="clock" className="focus-visible:outline-none mt-0 animate-fade-in">
-                <HinglishClock />
-              </TabsContent>
+              <div
+                aria-hidden={isSwitching}
+                className={`transition-opacity duration-150 ${isSwitching ? 'opacity-0' : 'opacity-100'}`}
+              >
+                <TabsContent value="jap" className="focus-visible:outline-none mt-0 animate-fade-in">
+                  <NaamJapCounter />
+                </TabsContent>
+                <TabsContent value="panchang" className="focus-visible:outline-none mt-0 animate-fade-in">
+                  <HinduPanchang />
+                </TabsContent>
+                <TabsContent value="mantra" className="focus-visible:outline-none mt-0 animate-fade-in">
+                  <MantraOfTheDay />
+                </TabsContent>
+                <TabsContent value="gita" className="focus-visible:outline-none mt-0 animate-fade-in">
+                  <DailyGitaShlok />
+                </TabsContent>
+                <TabsContent value="chalisa" className="focus-visible:outline-none mt-0 animate-fade-in">
+                  <HanumanChalisa />
+                </TabsContent>
+                <TabsContent value="clock" className="focus-visible:outline-none mt-0 animate-fade-in">
+                  <HinglishClock />
+                </TabsContent>
+              </div>
+
+              {/* Lightweight loading dots */}
+              {isSwitching && (
+                <div
+                  className="absolute inset-0 flex items-center justify-center pointer-events-none"
+                  role="status"
+                  aria-label="Loading"
+                >
+                  <div className="flex items-center gap-2">
+                    <span className="w-2 h-2 rounded-full bg-foreground/50 animate-bounce [animation-delay:-0.3s]" />
+                    <span className="w-2 h-2 rounded-full bg-foreground/50 animate-bounce [animation-delay:-0.15s]" />
+                    <span className="w-2 h-2 rounded-full bg-foreground/50 animate-bounce" />
+                  </div>
+                </div>
+              )}
             </div>
           </Tabs>
         </section>
