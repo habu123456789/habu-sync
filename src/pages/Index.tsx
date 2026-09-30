@@ -39,9 +39,24 @@ const Index = () => {
   ];
 
   const [active, setActive] = useState('jap');
+  const [isSwitching, setIsSwitching] = useState(false);
+  const switchTimer = useRef<number | null>(null);
   const tabBarRef = useRef<HTMLDivElement>(null);
   const touchStartX = useRef<number | null>(null);
   const touchStartY = useRef<number | null>(null);
+
+  // Lightweight loading state on tab change (content dims, dots pulse, then fades in)
+  useEffect(() => () => {
+    if (switchTimer.current) window.clearTimeout(switchTimer.current);
+  }, []);
+
+  const handleTabChange = (value: string) => {
+    if (value === active) return;
+    setActive(value);
+    setIsSwitching(true);
+    if (switchTimer.current) window.clearTimeout(switchTimer.current);
+    switchTimer.current = window.setTimeout(() => setIsSwitching(false), 240);
+  };
 
   // Auto-scroll active pill into view (mobile horizontal scroll)
   useEffect(() => {
