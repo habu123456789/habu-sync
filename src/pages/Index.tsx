@@ -78,8 +78,8 @@ const Index = () => {
     // Only horizontal swipes, ignore vertical scrolls
     if (Math.abs(dx) < 60 || Math.abs(dy) > Math.abs(dx)) return;
     const idx = tabs.findIndex((t) => t.id === active);
-    if (dx < 0 && idx < tabs.length - 1) setActive(tabs[idx + 1].id);
-    if (dx > 0 && idx > 0) setActive(tabs[idx - 1].id);
+    if (dx < 0 && idx < tabs.length - 1) handleTabChange(tabs[idx + 1].id);
+    if (dx > 0 && idx > 0) handleTabChange(tabs[idx - 1].id);
   };
 
   return (
